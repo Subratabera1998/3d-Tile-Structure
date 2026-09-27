@@ -212,6 +212,10 @@ The **Contact** option provides the author's contact information.
 - JavaScript
 - Three.js
 
+## Acknowledgement
+
+The development and refinement of this application benefited from the use of ChatGPT (OpenAI) for coding assistance, debugging, feature development, problem solving, and documentation.
+
 ## Author
 
 Developed by **Subrata Bera**
