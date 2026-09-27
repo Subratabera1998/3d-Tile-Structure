@@ -15,6 +15,8 @@ An interactive web-based 3D block structure visualization and editing tool.
 - Undo and redo operations.
 - Enter fullscreen mode for the 3D structure.
 - Export the current 3D view as a high-resolution PDF.
+- Move selected blocks or groups one step with the keyboard arrow keys.
+- Synchronize block selection and appearance between the 3D and flattened views.
 
 ## Dimensions
 
@@ -63,6 +65,41 @@ This clears both:
 
 The same double-click action works on empty areas of the flattened view.
 
+## Group, Separate, Reverse and Free Move
+
+### Group and Ungroup
+
+Select the blocks to be grouped and use the **Group** control.
+
+Press **Ctrl+G** to perform the same action as the Group control. If the current selection is exactly one complete existing group, **Ctrl+G** performs **Ungroup** instead.
+
+After ungrouping, the former group members remain selected.
+
+### Separate and Reverse
+
+**Separate** moves the selected blocks or groups apart according to the current separation behaviour.
+
+**Reverse** moves separated blocks or groups back toward their original positions.
+
+### Free Move
+
+The **Free Move** control enables manual dragging of selected blocks or groups in the 3D view.
+
+The keyboard arrow keys provide an automatic Free Move step:
+
+- **↑**: Move the selected block(s) or group(s) one step upward in the current 3D view.
+- **↓**: Move one step downward.
+- **←**: Move one step left.
+- **→**: Move one step right.
+
+Each arrow-key press performs one movement step and creates one Undo history action. Keyboard Free Move does not require the visible Free Move control to be enabled.
+
+## Flattened View and Synchronization
+
+The flattened view represents the same 3D blocks using their original block identities. Each flattened tile corresponds to the 3D block with the same ABC block number.
+
+Selection, deselection, colouring, and hover highlighting are synchronized between the 3D structure and the flattened view. Moving, separating, or grouping a block in 3D does not change the position of its corresponding flattened tile.
+
 ## PDF Export
 
 The PDF export contains the current 3D view as a high-resolution image.
@@ -80,9 +117,11 @@ Press **Ctrl+S** to open the **Save As** dialog. The dialog starts in the **Down
 - **Ctrl+S**: Save PDF As
 - **Ctrl+Z**: Undo
 - **Ctrl+Y**: Redo
-- **Ctrl+G**: Group selected blocks
-- **Ctrl+Shift+G**: Ungroup
-- **Esc**: Exit fullscreen mode
+- **Ctrl+G**: Group selected blocks, or Ungroup when the selection is exactly one complete group
+- **↑ / ↓ / ← / →**: Perform one automatic Free Move step on the selected block(s) or group(s)
+- **Esc**: Exit the active fullscreen, Help, or Contact overlay
+
+**Ctrl+Shift+G** is not used.
 
 ## Icon Guide
 
@@ -104,7 +143,7 @@ The main controls use the following icons:
 | `⧉` | Group | Groups the selected blocks. When a complete existing group is selected, the control performs the corresponding ungroup action. |
 | `⤢` | Separate | Separates the selected blocks or groups. |
 | `↺` | Reverse | Reverses the separation of selected blocks or groups by returning them toward their original positions. |
-| <img src="free-move-icon.svg" width="20" height="20" alt="Free Move"> | Free Move | Toggles Free Move mode. When enabled, selected blocks or groups can be dragged in the 3D view. |
+| <img src="free-move-icon.svg" width="20" height="20" alt="Free Move"> | Free Move | Toggles manual Free Move mode for dragging selected blocks or groups in the 3D view. Keyboard arrow keys also perform one automatic Free Move step. |
 | `↶` | Undo | Reverts the most recent stored action. |
 | `↷` | Redo | Reapplies an action that was undone. |
 | `↻` | Reset | Resets the current structure to its initial arrangement using the current dimensions. |
@@ -115,7 +154,7 @@ The **Download** icon is <img src="download-icon.svg" width="20" height="20" alt
 
 ### Free Move icon
 
-The **Free Move** icon is <svg viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px;vertical-align:middle"><path d="M12 3v18M3 12h18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M12 3l-2.6 2.6M12 3l2.6 2.6M12 21l-2.6-2.6M12 21l2.6-2.6M3 12l2.6-2.6M3 12l2.6 2.6M21 12l-2.6-2.6M21 12l-2.6 2.6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>, the four-direction movement symbol. When Free Move is enabled, a selected block or group can be dragged to a new position in the 3D view.
+The **Free Move** icon is <svg viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px;vertical-align:middle"><path d="M12 3v18M3 12h18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M12 3l-2.6 2.6M12 3l2.6 2.6M12 21l-2.6-2.6M12 21l2.6-2.6M3 12l2.6-2.6M3 12l2.6 2.6M21 12l-2.6-2.6M21 12l-2.6 2.6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>, the four-direction movement symbol. When Free Move is enabled, a selected block or group can be dragged to a new position in the 3D view. The same one-step movement can also be performed with the keyboard arrow keys.
 
 ### Cross icon
 
@@ -144,6 +183,12 @@ The default value is **5**.
 For example, when History Count is set to **5**, the application keeps the five most recent actions available for Undo/Redo. When the limit is reached, older history is removed to keep the history within the selected limit.
 
 Changing the History Count immediately adjusts both the Undo and Redo history to the selected limit.
+
+## Help and Contact
+
+The **Help** panel provides explanations of the main controls, selection, grouping, Free Move, flattened-view synchronization, History Count, PDF export, fullscreen mode, and keyboard shortcuts.
+
+The **Contact** option provides the author's contact information.
 
 ## Controls
 
