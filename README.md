@@ -96,7 +96,7 @@ The main controls use the following icons:
 | `B` | B Direction | Selects the B-fixed flattened view. |
 | `C` | C Direction | Selects the C-fixed flattened view. |
 | `↑ / ↓` | Layer Order | Toggles the flattened layer order between ascending and descending. |
-| <svg viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px;vertical-align:middle"><path d="M12 3v11m0 0-4-4m4 4 4-4M5 17v3h14v-3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg> | Download PDF | Downloads the current 3D view as a PDF directly to the browser's default Downloads folder. |
+| <img src="download-icon.svg" width="20" height="20" alt="Download PDF"> | Download PDF | Downloads the current 3D view as a PDF directly to the browser's default Downloads folder. |
 | `⛶` | Full Screen | Opens the custom fullscreen view of the 3D structure. |
 | `×` | Exit Full Screen | Closes the custom fullscreen view and returns to the normal page. The fullscreen button changes from `⛶` to `×` while fullscreen is active. |
 | `⚙` | Settings | Opens or closes the settings panel containing display options and History Count. |
@@ -104,14 +104,14 @@ The main controls use the following icons:
 | `⧉` | Group | Groups the selected blocks. When a complete existing group is selected, the control performs the corresponding ungroup action. |
 | `⤢` | Separate | Separates the selected blocks or groups. |
 | `↺` | Reverse | Reverses the separation of selected blocks or groups by returning them toward their original positions. |
-| <svg viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px;vertical-align:middle"><path d="M12 3v18M3 12h18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M12 3l-2.6 2.6M12 3l2.6 2.6M12 21l-2.6-2.6M12 21l2.6-2.6M3 12l2.6-2.6M3 12l2.6 2.6M21 12l-2.6-2.6M21 12l-2.6 2.6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg> | Free Move | Toggles Free Move mode. When enabled, selected blocks or groups can be dragged in the 3D view. |
+| <img src="free-move-icon.svg" width="20" height="20" alt="Free Move"> | Free Move | Toggles Free Move mode. When enabled, selected blocks or groups can be dragged in the 3D view. |
 | `↶` | Undo | Reverts the most recent stored action. |
 | `↷` | Redo | Reapplies an action that was undone. |
 | `↻` | Reset | Resets the current structure to its initial arrangement using the current dimensions. |
 
 ### Download icon
 
-The **Download** icon is <svg viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px;vertical-align:middle"><path d="M12 3v11m0 0-4-4m4 4 4-4M5 17v3h14v-3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>, the downward arrow pointing into a tray. Clicking it performs a direct PDF download rather than opening the Save As dialog.
+The **Download** icon is <img src="download-icon.svg" width="20" height="20" alt="Download PDF">, the downward arrow pointing into a tray. Clicking it performs a direct PDF download rather than opening the Save As dialog.
 
 ### Free Move icon
 
