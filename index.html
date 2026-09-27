@@ -316,6 +316,26 @@
   }
 
   #cubeFullscreenBtn:hover { background: #fff; }
+  #exportPdfBtn {
+    position: absolute;
+    right: 50px;
+    bottom: 10px;
+    z-index: 2147483647;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid #888;
+    border-radius: 4px;
+    background: rgba(255,255,255,.9);
+    color: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+  }
+
+  #exportPdfBtn:hover { background: #fff; }
+
 
   #ketBox {
     position: absolute;
@@ -354,7 +374,6 @@
     vertical-align: -0.30em;
     margin-left: 1px;
   }
-  body.cubeOnlyMode #ketBox { display: none !important; }
 
   body.cubeOnlyMode { overflow: hidden; }
 
@@ -386,6 +405,16 @@
 
   /* Keep the exit/minimize control visible on mobile browsers, including
      Android browsers that reserve space for the system navigation area. */
+  body.cubeOnlyMode #exportPdfBtn {
+    position: fixed !important;
+    right: 52px !important;
+    bottom: max(10px, env(safe-area-inset-bottom)) !important;
+    z-index: 2147483647 !important;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
   body.cubeOnlyMode #cubeFullscreenBtn {
     position: fixed !important;
     right: 10px !important;
@@ -397,6 +426,12 @@
   }
 
   @media (max-width: 900px) {
+    #exportPdfBtn {
+      right: 44px;
+      bottom: max(6px, env(safe-area-inset-bottom));
+      width: 32px;
+      height: 32px;
+    }
     #cubeFullscreenBtn {
       right: 6px;
       bottom: max(6px, env(safe-area-inset-bottom));
@@ -414,6 +449,12 @@
       font-size: 16px;
     }
 
+    body.cubeOnlyMode #exportPdfBtn {
+      right: 46px !important;
+      bottom: max(8px, env(safe-area-inset-bottom)) !important;
+      width: 36px !important;
+      height: 36px !important;
+    }
     body.cubeOnlyMode #cubeFullscreenBtn {
       right: 8px !important;
       bottom: max(8px, env(safe-area-inset-bottom)) !important;
@@ -682,12 +723,18 @@
     <div id="viewer"></div>
     <div id="ketBox" aria-live="polite"></div>
     <button id="cubeFullscreenBtn" type="button" title="Full screen">⛶</button>
+    <button id="exportPdfBtn" type="button" title="Download (Ctrl+S)" aria-label="Download PDF">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="width:18px;height:18px;display:block;overflow:visible">
+        <path d="M12 3v11m0 0-4-4m4 4 4-4M5 17v3h14v-3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
     <button id="historyTab" type="button" title="Settings" aria-label="Settings">⚙</button>
     <div id="historySettings" aria-hidden="true">
 
       <label><input type="checkbox" id="showNumbers" checked> Show block numbers</label>
       <label><input type="checkbox" id="showAxes"> Show A-B-C directions</label>
       <label><input type="checkbox" id="showKet"> Show ket</label>
+      <label><input type="checkbox" id="showShadow" checked> Show shadow</label>
       <div class="settingsDivider"></div>
 
 <label>History Count
@@ -728,8 +775,8 @@
       <button id="applySizeBtn" type="button">Apply</button>
     </div>
     <div id="historyControls">
-      <button id="undoBtn" type="button" title="Ctrl+Z">↶</button>
-      <button id="redoBtn" type="button" title="Ctrl+Y">↷</button>
+      <button id="undoBtn" type="button" title="Undo (Ctrl+Z)">↶</button>
+      <button id="redoBtn" type="button" title="Redo (Ctrl+Y)">↷</button>
       <button id="resetBtn" type="button" title="Reset">↻</button>
     </div>
   </div>
@@ -773,6 +820,8 @@ let freeMoveEnabled = false;
 const cubeFullscreenBtn = document.getElementById('cubeFullscreenBtn');
 const ketBox = document.getElementById('ketBox');
 const showKet = document.getElementById('showKet');
+const showShadow = document.getElementById('showShadow');
+const exportPdfBtn = document.getElementById('exportPdfBtn');
 const historyTab = document.getElementById('historyTab');
 const historySettings = document.getElementById('historySettings');
 const historyCount = document.getElementById('historyCount');
@@ -782,11 +831,12 @@ function setCubeOnlyMode(enabled) {
   cubeOnlyMode = enabled;
   document.body.classList.toggle('cubeOnlyMode', enabled);
   cubeFullscreenBtn.textContent = enabled ? '×' : '⛶';
-  cubeFullscreenBtn.title = enabled ? 'Exit full screen' : 'Full screen cube';
+  cubeFullscreenBtn.title = enabled ? 'Exit (Esc)' : 'Full Screen';
 
-  // Only the physical blocks remain visible in this mode.
-  directionArrows.forEach(({arrow}) => arrow.visible = enabled ? false : showAxes.checked);
-  directionLabels.forEach(label => label.visible = enabled ? false : showAxes.checked);
+  // Keep direction markers visible in fullscreen when the main-page checkbox is checked.
+  directionArrows.forEach(({arrow}) => arrow.visible = showAxes.checked);
+  directionLabels.forEach(label => label.visible = showAxes.checked);
+  ketSelectedStates();
 
   requestAnimationFrame(() => {
     resize();
@@ -1648,7 +1698,7 @@ function updateDirectionMarkers() {
     directionArrows[5].arrow.setLength(length, head, 0.10);
     directionLabels[5].position.set(center.x, center.y - hy - gap - length - 0.15, center.z);
 
-    const visible = showAxes.checked && !cubeOnlyMode;
+    const visible = showAxes.checked;
     directionArrows.forEach(({arrow}) => arrow.visible = visible);
     directionLabels.forEach(label => label.visible = visible);
     return;
@@ -1747,7 +1797,7 @@ function updateDirectionMarkers() {
   directionArrows[5].arrow.setLength(length, head, 0.10);
   directionLabels[5].position.set(center.x, center.y - hy - gap - length - 0.15, center.z);
 
-  const visible = showAxes.checked && !cubeOnlyMode;
+  const visible = showAxes.checked;
   directionArrows.forEach(({arrow}) => arrow.visible = visible);
   directionLabels.forEach(label => label.visible = visible);
 }
@@ -1824,6 +1874,254 @@ flatOrderBtn.addEventListener('click', () => {
 
   if (window.flatAxis) buildFlatNet(window.flatAxis);
 });
+
+
+async function exportCurrentViewToPDF(saveAs = false) {
+  const viewWidth = Math.max(1, viewer.clientWidth);
+  const viewHeight = Math.max(1, viewer.clientHeight);
+
+  const oldPixelRatio = renderer.getPixelRatio();
+  const oldWidth = renderer.domElement.width;
+  const oldHeight = renderer.domElement.height;
+  const oldBackground = scene.background;
+  const oldAspect = camera.aspect;
+  const oldClearColor = renderer.getClearColor(new THREE.Color());
+  const oldClearAlpha = renderer.getClearAlpha();
+  const oldShadow = shadow.visible;
+  const oldArrows = directionArrows.map(x => x.arrow.visible);
+  const oldLabels = directionLabels.map(x => x.visible);
+
+  // Render a high-resolution JPEG and place it in the PDF.
+  const maxPixels = 18000000;
+  const maxSide = 7500;
+  const scale = Math.min(
+    4,
+    maxSide / viewWidth,
+    maxSide / viewHeight,
+    Math.sqrt(maxPixels / (viewWidth * viewHeight))
+  );
+
+  try {
+    scene.background = null;
+    shadow.visible = showShadow.checked;
+    directionArrows.forEach(({arrow}) => arrow.visible = showAxes.checked);
+    directionLabels.forEach(label => label.visible = showAxes.checked);
+
+    camera.aspect = viewWidth / viewHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setPixelRatio(scale);
+    renderer.setSize(viewWidth, viewHeight, false);
+    renderer.setClearColor(0x000000, 0);
+    renderer.render(scene, camera);
+
+    const source = renderer.domElement;
+    const w = source.width;
+    const h = source.height;
+    const ctx = document.createElement('canvas').getContext('2d', {willReadFrequently:true});
+    ctx.canvas.width = w;
+    ctx.canvas.height = h;
+    ctx.clearRect(0, 0, w, h);
+    ctx.drawImage(source, 0, 0);
+
+    const pixels = ctx.getImageData(0, 0, w, h).data;
+    let minX = w, minY = h, maxX = -1, maxY = -1;
+
+    for (let y = 0; y < h; y++) {
+      const row = y * w * 4;
+      for (let x = 0; x < w; x++) {
+        if (pixels[row + x * 4 + 3] > 5) {
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+        }
+      }
+    }
+
+    if (maxX < minX || maxY < minY) {
+      alert('Nothing visible to export.');
+      return;
+    }
+
+    const gap = Math.max(8, Math.round(18 * scale));
+    minX = Math.max(0, minX - gap);
+    minY = Math.max(0, minY - gap);
+    maxX = Math.min(w - 1, maxX + gap);
+    maxY = Math.min(h - 1, maxY + gap);
+
+    const cropW = maxX - minX + 1;
+    const cropH = maxY - minY + 1;
+
+    const cropCanvas = document.createElement('canvas');
+    cropCanvas.width = cropW;
+    cropCanvas.height = cropH;
+
+    const cropCtx = cropCanvas.getContext('2d');
+    cropCtx.fillStyle = '#ffffff';
+    cropCtx.fillRect(0, 0, cropW, cropH);
+    cropCtx.drawImage(
+      ctx.canvas,
+      minX, minY, cropW, cropH,
+      0, 0, cropW, cropH
+    );
+
+    const jpeg = cropCanvas.toDataURL('image/jpeg', 0.98);
+    const raw = atob(jpeg.split(',')[1]);
+    const imageBytes = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i++) imageBytes[i] = raw.charCodeAt(i);
+
+    const enc = new TextEncoder();
+    const cat = (...parts) => {
+      const size = parts.reduce((n, p) => n + p.length, 0);
+      const out = new Uint8Array(size);
+      let at = 0;
+      for (const p of parts) {
+        out.set(p, at);
+        at += p.length;
+      }
+      return out;
+    };
+
+    const pdfLiteral = (s) =>
+      '(' + s.replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)') + ')';
+
+    const hiddenDetails = [
+      'Developed by: Subrata Bera.',
+      'Affiliation: University of Calcutta.',
+      'Address: Rajabazar Science College, 92, Acharya Prafulla Chandra Road, Kolkata-700009, West Bengal, India.',
+      'Email: 98subratabera@gmail.com.',
+      'Year of Development: 2026.'
+    ];
+
+    const dpi = 300;
+    const pageW = cropW * 72 / dpi;
+    const pageH = cropH * 72 / dpi;
+
+    // The image remains the only visible PDF content.
+    // The attribution is real PDF text, but rendered invisible, so it is
+    // available to PDF search without creating a visible/interactive layer.
+    const imageStream = `q\n${pageW.toFixed(3)} 0 0 ${pageH.toFixed(3)} 0 0 cm\n/Im0 Do\nQ\n`;
+    const hiddenStream = hiddenDetails.map((line, i) => {
+      const y = hiddenDetails.length === 1
+        ? Math.max(1, pageH / 2)
+        : 1 + (pageH - 2) * (i / (hiddenDetails.length - 1));
+      return `BT\n/F1 1 Tf\n3 Tr\n1 ${y.toFixed(3)} Td\n${pdfLiteral(line)} Tj\nET\n`;
+    }).join('');
+
+    const stream = enc.encode(imageStream + hiddenStream);
+
+    const objects = [
+      enc.encode('<< /Type /Catalog /Pages 2 0 R >>'),
+      enc.encode('<< /Type /Pages /Kids [3 0 R] /Count 1 >>'),
+      enc.encode(
+        `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageW.toFixed(3)} ${pageH.toFixed(3)}] ` +
+        `/Resources << /XObject << /Im0 4 0 R >> /Font << /F1 6 0 R >> >> /Contents 5 0 R >>`
+      ),
+      cat(
+        enc.encode(
+          `<< /Type /XObject /Subtype /Image /Width ${cropW} /Height ${cropH} ` +
+          `/ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode ` +
+          `/Length ${imageBytes.length} >>\nstream\n`
+        ),
+        imageBytes,
+        enc.encode('\nendstream')
+      ),
+      cat(
+        enc.encode(`<< /Length ${stream.length} >>\nstream\n`),
+        stream,
+        enc.encode('endstream')
+      ),
+      enc.encode('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>')
+    ];
+
+    let pdf = enc.encode('%PDF-1.4\n%\n');
+    const offsets = [0];
+
+    for (let i = 0; i < objects.length; i++) {
+      offsets.push(pdf.length);
+      pdf = cat(
+        pdf,
+        enc.encode(`${i + 1} 0 obj\n`),
+        objects[i],
+        enc.encode('\nendobj\n')
+      );
+    }
+
+    const xrefAt = pdf.length;
+    let xref = `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+    for (let i = 1; i < offsets.length; i++) {
+      xref += `${String(offsets[i]).padStart(10, '0')} 00000 n \n`;
+    }
+    xref +=
+      `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\n` +
+      `startxref\n${xrefAt}\n%%EOF\n`;
+
+    pdf = cat(pdf, enc.encode(xref));
+
+    const pdfBlob = new Blob([pdf], {type:'application/pdf'});
+
+    if (saveAs) {
+      if ('showSaveFilePicker' in window) {
+        try {
+          const handle = await window.showSaveFilePicker({
+            suggestedName: '3d_tile_structure_view.pdf',
+            startIn: 'downloads',
+            types: [{
+              description: 'PDF file',
+              accept: {'application/pdf': ['.pdf']}
+            }]
+          });
+          const writable = await handle.createWritable();
+          await writable.write(pdfBlob);
+          await writable.close();
+        } catch (err) {
+          if (err?.name !== 'AbortError') throw err;
+        }
+      } else {
+        const url = URL.createObjectURL(pdfBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = '3d_tile_structure_view.pdf';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+    } else {
+      // Download icon: direct download using the browser's default download location.
+      const url = URL.createObjectURL(pdfBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = '3d_tile_structure_view.pdf';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+  } catch (err) {
+    console.error('PDF export failed:', err);
+    alert('Could not create the PDF file.');
+  } finally {
+    renderer.setPixelRatio(oldPixelRatio);
+    renderer.setSize(viewWidth, viewHeight, false);
+
+    if (renderer.domElement.width !== oldWidth || renderer.domElement.height !== oldHeight) {
+      renderer.domElement.width = oldWidth;
+      renderer.domElement.height = oldHeight;
+    }
+
+    renderer.setClearColor(oldClearColor, oldClearAlpha);
+    scene.background = oldBackground;
+    shadow.visible = oldShadow;
+    directionArrows.forEach(({arrow}, i) => arrow.visible = oldArrows[i]);
+    directionLabels.forEach((label, i) => label.visible = oldLabels[i]);
+
+    camera.aspect = oldAspect;
+    camera.updateProjectionMatrix();
+    resize();
+  }
+}
 
 // A subtle shadow-like plane under the cube.
 const shadow = new THREE.Mesh(
@@ -2390,6 +2688,11 @@ showAxes.addEventListener('change', () => {
   updateDirectionMarkers();
 });
 showKet.addEventListener('change', ketSelectedStates);
+showShadow.addEventListener('change', () => { shadow.visible = showShadow.checked; });
+exportPdfBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  exportCurrentViewToPDF(false);
+});
 
 historyTab.addEventListener('click', (e) => {
   e.stopPropagation();
@@ -2829,7 +3132,7 @@ function updateGroupButtons() {
   const allSelected = cubies.length > 0 && selectedCubies.size === cubies.length;
   selectAllBtn.disabled = cubies.length === 0;
   selectAllBtn.textContent = '▦';
-  selectAllBtn.title = allSelected ? 'Deselect all' : 'Select all';
+  selectAllBtn.title = allSelected ? 'Deselect all (ctrl+A)' : 'Select all (ctrl+A)';
   selectAllBtn.setAttribute('aria-label', allSelected ? 'Deselect all' : 'Select all');
   selectAllBtn.classList.toggle('active', allSelected);
 
@@ -2848,7 +3151,7 @@ function updateGroupButtons() {
   groupBtn.textContent = '⧉';
   groupBtn.title = singleStandaloneBlock
     ? 'Select at least two blocks to group'
-    : (onlyOneWholeGroup ? 'Ungroup' : 'Group');
+    : (onlyOneWholeGroup ? 'Ungroup (Ctrl+G)' : 'Group (Ctrl+G)');
   groupBtn.setAttribute('aria-label', onlyOneWholeGroup ? 'Ungroup' : 'Group');
   groupBtn.classList.toggle('grouped', onlyOneWholeGroup);
   separateBtn.disabled = !hasSelection && !activeGroup;
@@ -2891,10 +3194,17 @@ function ungroupActiveGroup() {
   saveUndo();
 
   // Detach every member while preserving its current world position.
+  // If the group was separated, keep that separated state on each ungrouped
+  // block so Reverse remains available for any subset selected afterwards.
+  const wasSeparated = group.userData.separated === true;
+  const separationDelta = group.userData.separationDelta?.clone?.() || new THREE.Vector3();
   const members = [...(group.userData.members || [])];
   for (const cubie of members) {
     groupsRoot.attach(cubie);
     cubie.userData.group = null;
+    cubie.userData.separated = wasSeparated;
+    cubie.userData.separationDelta = wasSeparated ? separationDelta.clone() : new THREE.Vector3();
+    cubie.userData.preSeparationPosition = wasSeparated ? cubie.position.clone() : null;
     setCubieSelected(cubie, false, false);
   }
   updateFlatSelection();
@@ -3364,11 +3674,31 @@ if (typeof ResizeObserver !== 'undefined') {
 function handleCubeShortcut(e) {
   if (e.__cubeShortcutHandled) return;
 
+  const key = String(e.key || '').toLowerCase();
+  const code = e.code;
+
+  // Escape closes the custom fullscreen view.
+  if (key === 'escape' || code === 'Escape') {
+    if (cubeOnlyMode) {
+      e.__cubeShortcutHandled = true;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      setCubeOnlyMode(false);
+    }
+    return;
+  }
+
   const ctrl = e.ctrlKey || e.metaKey;
   if (!ctrl) return;
 
-  const key = String(e.key || '').toLowerCase();
-  const code = e.code;
+  // Ctrl+S / Cmd+S opens the PDF Save As dialog.
+  if (key === 's' || code === 'KeyS') {
+    e.__cubeShortcutHandled = true;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    exportCurrentViewToPDF(true);
+    return;
+  }
 
   // Ctrl+Shift+G = Ungroup (the Group button's existing ungroup action).
   if ((key === 'g' || code === 'KeyG') && e.shiftKey) {
