@@ -214,7 +214,7 @@ The **Contact** option provides the author's contact information.
 
 ## Acknowledgement
 
-The development and refinement of this application benefited from the use of ChatGPT (OpenAI) for coding assistance, debugging, feature development, problem solving, and documentation.
+The development and refinement of this application benefited from the use of ChatGPT (OpenAI) for coding assistance.
 
 ## Author
 
