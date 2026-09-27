@@ -533,6 +533,168 @@
     font-size: 12px;
   }
 
+  #helpActions {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+  }
+  #helpActions button {
+    flex: 1 1 0;
+    min-height: 30px;
+    margin: 0;
+    padding: 6px 8px;
+    border: 1px solid #888;
+    border-radius: 4px;
+    background: #fff;
+    color: #222;
+    font-size: 12px;
+    box-shadow: none;
+  }
+  #helpActions button:hover { background: #f5f5f5; }
+
+  #contactOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483646;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0,0,0,.35);
+  }
+  #contactOverlay.open { display: flex; }
+  #contactModal {
+    width: min(500px, 94vw);
+    max-height: min(70vh, 620px);
+    overflow: hidden;
+    background: #fff;
+    color: #222;
+    border: 1px solid #888;
+    border-radius: 8px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.28);
+    display: flex;
+    flex-direction: column;
+  }
+  #contactHeader {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #d8d8d8;
+    background: #f7f7f7;
+  }
+  #contactTitle {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  #contactCloseBtn {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    padding: 0;
+    border: 1px solid #888;
+    border-radius: 4px;
+    background: #fff;
+    color: #222;
+    font-size: 20px;
+    line-height: 1;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #contactCloseBtn:hover { background: #eee; }
+  #contactContent {
+    overflow: auto;
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  #contactContent p { margin: 6px 0; }
+  #contactContent a { color: #2868c9; }
+
+  #helpOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483646;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0,0,0,.35);
+  }
+  #helpOverlay.open { display: flex; }
+
+  #helpModal {
+    width: min(760px, 94vw);
+    max-height: min(82vh, 760px);
+    overflow: hidden;
+    background: #fff;
+    color: #222;
+    border: 1px solid #888;
+    border-radius: 8px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.28);
+    display: flex;
+    flex-direction: column;
+  }
+  #helpHeader {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #d8d8d8;
+    background: #f7f7f7;
+  }
+  #helpTitle {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  #helpCloseBtn {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    padding: 0;
+    border: 1px solid #888;
+    border-radius: 4px;
+    background: #fff;
+    color: #222;
+    font-size: 20px;
+    line-height: 1;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #helpCloseBtn:hover { background: #eee; }
+  #helpContent {
+    overflow: auto;
+    padding: 14px 16px 18px;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  #helpContent h3 {
+    margin: 12px 0 5px;
+    font-size: 14px;
+  }
+  #helpContent h3:first-child { margin-top: 0; }
+  #helpContent p { margin: 5px 0; }
+  #helpContent ul {
+    margin: 5px 0 8px 18px;
+    padding: 0;
+  }
+  #helpContent li { margin: 2px 0; }
+  #helpContent .helpIcon {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: -5px;
+    overflow: visible;
+  }
+
   #panel {
     position: absolute;
     top: 12px;
@@ -558,7 +720,6 @@
     align-items:center;
     justify-content:center;
   }
-  #selectModeBtn.active { background:#222; border-color:#222; }
   #groupButtons button:disabled { opacity:.45; cursor:default; }
   #freeMoveBtn.active { background:#222; border-color:#222; }
   #freeMoveBtn:not(.active) { opacity:.88; }
@@ -747,6 +908,99 @@
     <option value="20">20</option>
   </select>
 </label>
+      <div class="settingsDivider"></div>
+      <div id="helpActions">
+        <button id="helpBtn" type="button" title="How to use" aria-label="How to use">?&nbsp; Help</button>
+        <button id="contactBtn" type="button" title="Contact details" aria-label="Contact details">Contact</button>
+      </div>
+    </div>
+    <div id="helpOverlay" aria-hidden="true">
+      <div id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+        <div id="helpHeader">
+          <div id="helpTitle">How to Use</div>
+          <button id="helpCloseBtn" type="button" title="Close Help" aria-label="Close Help">×</button>
+        </div>
+        <div id="helpContent">
+          <h3>Overview</h3>
+          <p>This tool lets you create and edit an interactive 3D block structure, change block colours, select and group blocks, move them, view flattened layers, and export the current view as a PDF.</p>
+
+          <h3>Dimensions</h3>
+          <p>Enter the dimensions of the local Subsystems of A, B and C respectively at the bottom as <strong>n ⊗ m ⊗ r</strong> and click <strong>Apply</strong>. Each block is identified by the coordinates <strong>ABC</strong>.</p>
+
+<h3>Colours</h3>
+<p>
+  Click a colour in the palette to make it the active painting colour.
+  Hover over a block to preview that colour, then click the block to apply it.
+  Click the active colour again to remove the colour selection and return to block-selection mode.
+</p>
+
+<h3>Add Colour</h3>
+<p>
+  Click the <strong>+</strong> button beside the colour palette to open the colour picker.
+  Choose a custom colour and add it to the palette.
+</p>
+
+          <h3>Selecting and Deselecting Blocks</h3>
+          <p>When no colour is active, click a block to select it. Click a selected block again to deselect it. Click additional blocks to select multiple blocks.</p>
+          <p>The <strong>▦ Select All</strong> button selects all blocks, and can be used again to deselect them.</p>
+          <p><strong>Double-click on white space</strong> in the 3D view to clear both the selected blocks and the active colour. The same action works on empty areas of the flattened view.</p>
+
+          <h3>Group, Separate, Reverse and Free Move</h3>
+          <p><strong>⧉ Group:</strong> groups the selected blocks. Selecting a complete existing group and using the same button performs the corresponding ungroup action.</p>
+          <p><strong>⤢ Separate:</strong> separates the selected blocks or groups.</p>
+          <p><strong>↺ Reverse:</strong> reverses the separation of selected blocks or groups by returning them toward their original positions.</p>
+          <p>When a grouped block is painted, the colour is applied consistently to the whole group. The same group-wide behaviour is used in the 3D and flattened views.</p>
+          <p><strong>Free Move:</strong> <svg class="helpIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+  <path d="M12 2.2 L9.0 5.3 L11.0 5.3 L11.0 11.0 L5.3 11.0 L5.3 9.0 L2.2 12.0 L5.3 15.0 L5.3 13.0 L11.0 13.0 L11.0 18.7 L9.0 18.7 L12 21.8 L15.0 18.7 L13.0 18.7 L13.0 13.0 L18.7 13.0 L18.7 15.0 L21.8 12.0 L18.7 9.0 L18.7 11.0 L13.0 11.0 L13.0 5.3 L15.0 5.3 Z"
+        fill="currentColor"/>
+</svg> Turn on Free Move, select blocks, then drag the selected blocks or groups in the 3D view.</p>
+
+          <h3>Flattened View</h3>
+          <p>Click <strong>🧊</strong> to show or hide the flattened representation. Use <strong>A</strong>, <strong>B</strong>, or <strong>C</strong> to choose which coordinate is fixed. Use <strong>↑ / ↓</strong> to change the layer order.</p>
+
+          <h3>Sync Between 3D Blocks and Flattened Tiles</h3>
+          <p>Each flattened tile represents the 3D block with the same <strong>ABC</strong> block number. The two views are synchronized by block identity, not by the block's current 3D position.</p>
+          <p>Selecting a block in the 3D view highlights the matching flattened tile, and selecting a tile in the flattened view selects the same 3D block.</p>
+          <p>Painting or hovering a block in either view is reflected on the corresponding item in the other view. If a block is moved, separated, or grouped in 3D, its flattened tile remains at the position determined by its original ABC coordinates.</p>
+
+          <h3>History Count</h3>
+          <p>History Count determines how many previous actions are retained for <strong>Undo</strong> and <strong>Redo</strong>.</p>
+
+          <h3>PDF Export</h3>
+          <p><strong>Download:</strong> <svg class="helpIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v11m0 0-4-4m4 4 4-4M5 17v3h14v-3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg> Click this button to download the current 3D view directly as a PDF to the browser's default Downloads folder.</p>
+       
+
+          <h3>Fullscreen</h3>
+          <p><strong>⛶</strong> opens the custom fullscreen view. <strong>×</strong> closes it.</p>
+
+          <h3>Keyboard Shortcuts</h3>
+          <ul>
+            <li><strong>Ctrl+S</strong>: Save PDF As</li>
+            <li><strong>Ctrl+Z</strong>: Undo</li>
+            <li><strong>Ctrl+Y</strong>: Redo</li>
+            <li><strong>Ctrl+G</strong>: Group selected blocks and groups, or Ungroup when exactly one complete group is selected</li>
+            <li><strong>Ctrl+A</strong>: Select/deselect all</li>
+            <li><strong>↑ / ↓ / ← / →</strong>: Move the selected blocks or group one Free Move step in the corresponding screen direction</li>
+            <li><strong>Esc</strong>: Exit</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+    <div id="contactOverlay" aria-hidden="true">
+      <div id="contactModal" role="dialog" aria-modal="true" aria-labelledby="contactTitle">
+        <div id="contactHeader">
+          <div id="contactTitle">Contact Details</div>
+          <button id="contactCloseBtn" type="button" title="Close Contact Details" aria-label="Close Contact Details">×</button>
+        </div>
+        <div id="contactContent">
+          <p><strong>Developed by:</strong> Subrata Bera</p>
+          <p><strong>Affiliation:</strong> University of Calcutta</p>
+          <p><strong>Address:</strong> Rajabazar Science College, 92, Acharya Prafulla Chandra Road, Kolkata-700009, West Bengal, India.</p>
+          <p><strong>Email:</strong> <a href="mailto:98subratabera@gmail.com">98subratabera@gmail.com</a></p>
+          <p><strong>Year of Development:</strong> 2026</p>
+        </div>
+      </div>
     </div>
     <div id="panel">
       <div id="groupButtons">
@@ -755,10 +1009,10 @@
         <button id="separateBtn" type="button" title="Separate" aria-label="Separate">⤢</button>
         <button id="reverseBtn" type="button" title="Reverse" aria-label="Reverse">↺</button>
         <button id="freeMoveBtn" type="button" title="Free Move: Off" aria-label="Free Move: Off">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="width:18px;height:18px;display:block;overflow:visible">
-            <path d="M12 3v18M3 12h18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
-            <path d="M12 3l-2.6 2.6M12 3l2.6 2.6M12 21l-2.6-2.6M12 21l2.6-2.6M3 12l2.6-2.6M3 12l2.6 2.6M21 12l-2.6-2.6M21 12l-2.6 2.6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <svg style="width:20px;height:20px;display:block;overflow:visible" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+  <path d="M12 2.2 L9.0 5.3 L11.0 5.3 L11.0 11.0 L5.3 11.0 L5.3 9.0 L2.2 12.0 L5.3 15.0 L5.3 13.0 L11.0 13.0 L11.0 18.7 L9.0 18.7 L12 21.8 L15.0 18.7 L13.0 18.7 L13.0 13.0 L18.7 13.0 L18.7 15.0 L21.8 12.0 L18.7 9.0 L18.7 11.0 L13.0 11.0 L13.0 5.3 L15.0 5.3 Z"
+        fill="currentColor"/>
+</svg>
         </button>
       </div>
     </div>
@@ -825,6 +1079,12 @@ const exportPdfBtn = document.getElementById('exportPdfBtn');
 const historyTab = document.getElementById('historyTab');
 const historySettings = document.getElementById('historySettings');
 const historyCount = document.getElementById('historyCount');
+const helpBtn = document.getElementById('helpBtn');
+const helpOverlay = document.getElementById('helpOverlay');
+const helpCloseBtn = document.getElementById('helpCloseBtn');
+const contactBtn = document.getElementById('contactBtn');
+const contactOverlay = document.getElementById('contactOverlay');
+const contactCloseBtn = document.getElementById('contactCloseBtn');
 let cubeOnlyMode = false;
 
 function setCubeOnlyMode(enabled) {
@@ -1252,9 +1512,11 @@ function buildFlatNet(axis = window.flatAxis || null) {
             return;
           }
 
-          // Painting a flattened block paints the corresponding 3D block too.
+          // Painting a flattened block paints the corresponding 3D block.
+          // For a grouped block, keep the same group-wide behaviour as the 3D view.
+          const members = getHoverEntity(cubie);
           saveUndo();
-          setCubieTexture(cubie, selectedColor);
+          for (const member of members) setCubieTexture(member, selectedColor);
         });
         layerEl.appendChild(tileEl);
       }
@@ -2701,6 +2963,58 @@ historyTab.addEventListener('click', (e) => {
   historyTab.innerHTML = open ? '⚙' : '⚙';
 });
 
+function closeContact() {
+  contactOverlay.classList.remove('open');
+  contactOverlay.setAttribute('aria-hidden', 'true');
+}
+
+function openContact() {
+  closeHelp();
+  contactOverlay.classList.add('open');
+  contactOverlay.setAttribute('aria-hidden', 'false');
+  requestAnimationFrame(() => contactCloseBtn.focus());
+}
+
+contactBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  openContact();
+});
+
+contactCloseBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  closeContact();
+});
+
+contactOverlay.addEventListener('click', (e) => {
+  if (e.target === contactOverlay) closeContact();
+});
+
+function closeHelp() {
+  helpOverlay.classList.remove('open');
+  helpOverlay.setAttribute('aria-hidden', 'true');
+}
+
+function openHelp() {
+  closeContact();
+  helpOverlay.classList.add('open');
+  helpOverlay.setAttribute('aria-hidden', 'false');
+  requestAnimationFrame(() => helpCloseBtn.focus());
+}
+
+helpBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  openHelp();
+});
+
+helpCloseBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  closeHelp();
+});
+
+helpOverlay.addEventListener('click', (e) => {
+  if (e.target === helpOverlay) closeHelp();
+});
+
 historyCount.addEventListener('change', () => {
   MAX_HISTORY = Math.max(1, Math.min(20, parseInt(historyCount.value, 10) || 5));
   while (undoStack.length > MAX_HISTORY) undoStack.shift();
@@ -2976,6 +3290,77 @@ function getSelectedMoveEntities() {
   return [...entities];
 }
 
+// A keyboard-arrow movement is one Free Move step. The step follows the
+// current camera's screen plane, so the four keyboard arrows always mean
+// up/down/left/right as seen in the current 3D view.
+const keyboardFreeMoveStep = spacing;
+
+function moveSelectedByKeyboard(direction) {
+  // Keyboard movement is only active in block-selection mode. This prevents
+  // arrow keys from moving a selection accidentally while a palette colour is
+  // active for painting.
+  if (selectedColor !== null) return false;
+
+  const entities = getSelectedMoveEntities();
+  if (!entities.length) return false;
+
+  let screenDirection;
+  const cameraRight = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0).normalize();
+  const cameraUp = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 1).normalize();
+
+  switch (direction) {
+    case 'ArrowUp':
+      screenDirection = cameraUp;
+      break;
+    case 'ArrowDown':
+      screenDirection = cameraUp.clone().negate();
+      break;
+    case 'ArrowLeft':
+      screenDirection = cameraRight.clone().negate();
+      break;
+    case 'ArrowRight':
+      screenDirection = cameraRight;
+      break;
+    default:
+      return false;
+  }
+
+  const worldDelta = screenDirection.multiplyScalar(keyboardFreeMoveStep);
+
+  // One key press is one history action, exactly like one completed Free Move
+  // drag. Selection itself is preserved because it is not part of history.
+  saveUndo();
+
+  for (const entity of entities) {
+    const parent = entity.parent || cubeRoot;
+    const currentWorld = entity.getWorldPosition(new THREE.Vector3());
+    const targetWorld = currentWorld.clone().add(worldDelta);
+    const currentLocal = parent.worldToLocal(currentWorld.clone());
+    const targetLocal = parent.worldToLocal(targetWorld.clone());
+    const localDelta = targetLocal.clone().sub(currentLocal);
+    const wasSeparated = entity.userData?.separated === true;
+
+    // Record the exact position before the first keyboard move, matching the
+    // existing Free Move separation semantics.
+    if (!wasSeparated) {
+      entity.userData.preSeparationPosition = entity.position.clone();
+    }
+
+    entity.position.copy(targetLocal);
+    entity.userData.separated = true;
+
+    const previousDelta = entity.userData.separationDelta instanceof THREE.Vector3
+      ? entity.userData.separationDelta.clone()
+      : new THREE.Vector3();
+    entity.userData.separationDelta = previousDelta.add(localDelta);
+  }
+
+  updateGroupButtons();
+  updateFlatSelection();
+  updateDirectionMarkers();
+  return true;
+}
+
 function startDragIfNeeded(e) {
   if (!freeMoveEnabled) return;
   if (!pointerDown || pointerDown.dragging || selectedColor !== null) return;
@@ -3115,8 +3500,9 @@ renderer.domElement.addEventListener('pointerup', e=>{
     return;
   }
 
+  const members = getHoverEntity(cubie);
   saveUndo();
-  setCubieTexture(cubie, selectedColor);
+  for (const member of members) setCubieTexture(member, selectedColor);
 });
 
 function updateGroupButtons() {
@@ -3207,12 +3593,17 @@ function ungroupActiveGroup() {
     cubie.userData.preSeparationPosition = wasSeparated ? cubie.position.clone() : null;
     setCubieSelected(cubie, false, false);
   }
-  updateFlatSelection();
 
   groups.delete(group);
   group.parent?.remove(group);
   activeGroup = null;
+
+  // Keep the former group members selected after ungrouping.
+  // This preserves the user's selection and makes the next operation
+  // (such as regrouping, moving, colouring, or reversing) act on the same blocks.
   selectedCubies.clear();
+  for (const cubie of members) setCubieSelected(cubie, true, false);
+  updateFlatSelection();
   updateGroupButtons();
   updateDirectionMarkers();
 }
@@ -3677,13 +4068,44 @@ function handleCubeShortcut(e) {
   const key = String(e.key || '').toLowerCase();
   const code = e.code;
 
-  // Escape closes the custom fullscreen view.
+  // Escape closes the topmost transient UI first, then custom fullscreen.
   if (key === 'escape' || code === 'Escape') {
+    if (helpOverlay.classList.contains('open')) {
+      e.__cubeShortcutHandled = true;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      closeHelp();
+      return;
+    }
+    if (contactOverlay.classList.contains('open')) {
+      e.__cubeShortcutHandled = true;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      closeContact();
+      return;
+    }
     if (cubeOnlyMode) {
       e.__cubeShortcutHandled = true;
       e.preventDefault();
       e.stopImmediatePropagation();
       setCubeOnlyMode(false);
+    }
+    return;
+  }
+
+  // Bare keyboard arrow keys perform one automatic Free Move step on the
+  // current selection. Never intercept them while typing in a form control.
+  const arrowKeys = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
+  if (arrowKeys.has(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey) {
+    const target = e.target;
+    const tag = target && target.tagName ? String(target.tagName).toLowerCase() : '';
+    const typingTarget = tag === 'input' || tag === 'select' || tag === 'textarea' || target?.isContentEditable;
+    if (!typingTarget && !helpOverlay.classList.contains('open') && !contactOverlay.classList.contains('open')) {
+      if (moveSelectedByKeyboard(e.key)) {
+        e.__cubeShortcutHandled = true;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      }
     }
     return;
   }
@@ -3700,25 +4122,9 @@ function handleCubeShortcut(e) {
     return;
   }
 
-  // Ctrl+Shift+G = Ungroup (the Group button's existing ungroup action).
-  if ((key === 'g' || code === 'KeyG') && e.shiftKey) {
-    e.__cubeShortcutHandled = true;
-    e.preventDefault();
-    e.stopImmediatePropagation();
-
-    const groupsInSelection = new Set(
-      [...selectedCubies].map(c => c.userData.group).filter(Boolean)
-    );
-    const onlyOneWholeGroup =
-      groupsInSelection.size === 1 &&
-      [...groupsInSelection][0].userData?.members?.length === selectedCubies.size &&
-      [...groupsInSelection][0].userData.members.every(c => selectedCubies.has(c));
-
-    if (onlyOneWholeGroup) groupBtn.click();
-    return;
-  }
-
-  // Ctrl+G = Group (the exact Group button action).
+  // Ctrl+G = Group or Ungroup, using exactly the same action as the button.
+  // If the current selection is exactly one complete group, the button's
+  // existing logic performs Ungroup. Otherwise it performs Group.
   if (key === 'g' || code === 'KeyG') {
     e.__cubeShortcutHandled = true;
     e.preventDefault();
@@ -3756,7 +4162,6 @@ function handleCubeShortcut(e) {
 }
 
 window.addEventListener('keydown', handleCubeShortcut, true);
-document.addEventListener('keydown', handleCubeShortcut, true);
 
 function updateSelectionHighlightAnimations() {
   for (const cubie of cubies) {
