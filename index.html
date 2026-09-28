@@ -1234,8 +1234,8 @@ const stickerGap = 0.012;
 const faceDefs = [
   { key:'px', normal:new THREE.Vector3( 1,0,0), rot:new THREE.Euler(0, Math.PI/2, 0) },
   { key:'nx', normal:new THREE.Vector3(-1,0,0), rot:new THREE.Euler(0,-Math.PI/2, 0) },
-  { key:'py', normal:new THREE.Vector3(0, 1,0), rot:new THREE.Euler(-Math.PI/2,0,0) },
-  { key:'ny', normal:new THREE.Vector3(0,-1,0), rot:new THREE.Euler( Math.PI/2,0,0) },
+  { key:'py', normal:new THREE.Vector3(0, 1,0), rot:new THREE.Euler(-Math.PI/2,0,-Math.PI/2) },
+  { key:'ny', normal:new THREE.Vector3(0,-1,0), rot:new THREE.Euler( Math.PI/2,0,Math.PI/2) },
   { key:'pz', normal:new THREE.Vector3(0,0, 1), rot:new THREE.Euler(0,0,0) },
   { key:'nz', normal:new THREE.Vector3(0,0,-1), rot:new THREE.Euler(0,Math.PI,0) }
 ];
