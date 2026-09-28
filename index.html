@@ -1117,6 +1117,7 @@ function setCubeOnlyMode(enabled) {
 
   requestAnimationFrame(() => {
     resize();
+   fitCameraToCube();
   });
 }
 
@@ -2131,7 +2132,7 @@ flattenToggle.addEventListener('click', () => {
 
   requestAnimationFrame(() => {
     resize();
-    fitCameraToCube();
+    //fitCameraToCube();
   });
 });
 
