@@ -397,6 +397,19 @@
     background: #dcdcdc;
   }
 
+ /* Fix Show ket visibility in Android fullscreen */
+body.cubeOnlyMode #ketBox.visible {
+  position: fixed !important;
+  left: max(10px, env(safe-area-inset-left)) !important;
+  right: auto !important;
+  bottom: max(10px, env(safe-area-inset-bottom)) !important;
+  z-index: 2147483647 !important;
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
   body.cubeOnlyMode #viewer,
   body.cubeOnlyMode #viewer canvas {
     width: 100% !important;
