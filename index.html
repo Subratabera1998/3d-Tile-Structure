@@ -128,9 +128,6 @@
     padding: 18px 10px 10px;
     border-left: 0;
   }
-  #flatTitle {
-    display: none;
-  }
   #flatDirections {
     display: none;
     gap: 4px;
@@ -336,6 +333,36 @@
 
   #exportPdfBtn:hover { background: #fff; }
 
+  #downloadMenu {
+    position: absolute;
+    right: 50px;
+    bottom: 52px;
+    z-index: 2147483647;
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    padding: 5px;
+    background: rgba(255,255,255,.96);
+    border: 1px solid #888;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.18);
+  }
+
+  #downloadMenu.open { display: flex; }
+
+  #downloadMenu button {
+    min-width: 76px;
+    height: 32px;
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  body.cubeOnlyMode #downloadMenu {
+    position: fixed !important;
+    right: 52px !important;
+    bottom: max(52px, calc(env(safe-area-inset-bottom) + 52px)) !important;
+  }
+
 
   #ketBox {
     position: absolute;
@@ -474,6 +501,10 @@ body.cubeOnlyMode #ketBox.visible {
       width: 36px !important;
       height: 36px !important;
       font-size: 22px !important;
+    }
+    body.cubeOnlyMode #downloadMenu {
+      right: 46px !important;
+      bottom: max(52px, calc(env(safe-area-inset-bottom) + 52px)) !important;
     }
   }
 
@@ -762,17 +793,11 @@ body.cubeOnlyMode #ketBox.visible {
     padding:5px 8px;
     font-size:14px;
   }
-  .modeSep { font-size:13px; color:#555; }
   #dimensions input {
     width:46px; height:38px; border:1px solid #2868c9;
     border-radius:4px; padding:5px; font-size:14px; text-align:center;
   }
   #dimensions span { font-size:16px; }
-  .directionLabel {
-    font-size:12px !important;
-    color:#555;
-    margin-left:2px;
-  }
 
   button {
     border: 1px solid #2868c9;
@@ -829,7 +854,6 @@ body.cubeOnlyMode #ketBox.visible {
         padding: 7px;
     }
     #flattenToggle { left: 0; top: 50%; padding: 0; width: 20px; height: 46px; font-size: 14px; }
-    #flatTitle { font-size:10px; margin-bottom:6px; }
     #flatPanel.open { width: max-content; }
     #flatDirections { gap:3px; }
     .flatDirBtn { width:34px; height:34px; flex:0 0 34px; padding:0; font-size:14px; }
@@ -889,26 +913,30 @@ body.cubeOnlyMode #ketBox.visible {
         <button type="button" class="flatDirBtn" data-axis="C">C</button>
         <button type="button" id="flatOrderBtn" class="flatDirBtn" title="Toggle ascending/descending" aria-label="Toggle ascending/descending">↑</button>
       </span>
-      <div id="flatTitle"></div>
-      <div id="flatNet" hidden></div>
+        <div id="flatNet" hidden></div>
     </div>
 
     <div id="viewerWrap">
     <div id="viewer"></div>
     <div id="ketBox" aria-live="polite"></div>
     <button id="cubeFullscreenBtn" type="button" title="Full screen">⛶</button>
-    <button id="exportPdfBtn" type="button" title="Download (Ctrl+S)" aria-label="Download PDF">
+    <button id="exportPdfBtn" type="button" title="Download (Ctrl+S)" aria-label="Download">
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="width:18px;height:18px;display:block;overflow:visible">
         <path d="M12 3v11m0 0-4-4m4 4 4-4M5 17v3h14v-3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
+    <div id="downloadMenu" aria-hidden="true">
+      <button type="button" data-download-format="png">PNG</button>
+      <button type="button" data-download-format="pdf">PDF</button>
+    </div>
     <button id="historyTab" type="button" title="Settings" aria-label="Settings">⚙</button>
     <div id="historySettings" aria-hidden="true">
 
-      <label><input type="checkbox" id="showNumbers" checked> Show block numbers</label>
-      <label><input type="checkbox" id="showAxes"> Show A-B-C directions</label>
-      <label><input type="checkbox" id="showKet"> Show ket</label>
-      <label><input type="checkbox" id="showShadow" checked> Show shadow</label>
+      <label><input type="checkbox" id="showNumbers" checked> Block numbers</label>
+      <label><input type="checkbox" id="showAxes"> Directions</label>
+      <label><input type="checkbox" id="showKet" checked> Ket vector</label>
+      <label><input type="checkbox" id="showShadow" checked> Shadow</label>
+      <label><input type="checkbox" id="magnetToggle" checked> Magnetic snap</label>
       <div class="settingsDivider"></div>
 
 <label>History Count
@@ -980,7 +1008,7 @@ body.cubeOnlyMode #ketBox.visible {
           <p>History Count determines how many previous actions are retained for <strong>Undo</strong> and <strong>Redo</strong>.</p>
 
           <h3>PDF Export</h3>
-          <p><strong>Download:</strong> <svg class="helpIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v11m0 0-4-4m4 4 4-4M5 17v3h14v-3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg> Click this button to download the current 3D view directly as a PDF to the browser's default Downloads folder.</p>
+          <p><strong>Download:</strong> <svg class="helpIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v11m0 0-4-4m4 4 4-4M5 17v3h14v-3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg> Click this button and choose <strong>PNG</strong> or <strong>PDF</strong>. The PNG has a transparent background. Ctrl+S / Cmd+S opens Save As directly.</p>
        
 
           <h3>Fullscreen</h3>
@@ -988,7 +1016,7 @@ body.cubeOnlyMode #ketBox.visible {
 
           <h3>Keyboard Shortcuts</h3>
           <ul>
-            <li><strong>Ctrl+S</strong>: Save PDF As</li>
+            <li><strong>Ctrl+S</strong>: Save As</li>
             <li><strong>Ctrl+Z</strong>: Undo</li>
             <li><strong>Ctrl+Y</strong>: Redo</li>
             <li><strong>Ctrl+G</strong>: Group selected blocks and groups, or Ungroup when exactly one complete group is selected</li>
@@ -1078,6 +1106,8 @@ const paletteEl = document.getElementById('palette');
 const customColorInput = document.getElementById('customColor');
 const addColorBtn = document.getElementById('addColorBtn');
 const resetBtn = document.getElementById('resetBtn');
+const undoBtn = document.getElementById('undoBtn');
+const redoBtn = document.getElementById('redoBtn');
 const sizeN = document.getElementById('sizeN');
 const sizeM = document.getElementById('sizeM');
 const sizeR = document.getElementById('sizeR');
@@ -1092,7 +1122,9 @@ const cubeFullscreenBtn = document.getElementById('cubeFullscreenBtn');
 const ketBox = document.getElementById('ketBox');
 const showKet = document.getElementById('showKet');
 const showShadow = document.getElementById('showShadow');
+const magnetToggle = document.getElementById('magnetToggle');
 const exportPdfBtn = document.getElementById('exportPdfBtn');
+const downloadMenu = document.getElementById('downloadMenu');
 const historyTab = document.getElementById('historyTab');
 const historySettings = document.getElementById('historySettings');
 const historyCount = document.getElementById('historyCount');
@@ -1154,8 +1186,8 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.08;
 controls.enablePan = false;
-controls.minDistance = 3.0;
-controls.maxDistance = 30.0;
+controls.minDistance = 1.0;
+controls.maxDistance = 60.0;
 controls.target.set(0, 0, 0);
 
 scene.add(new THREE.HemisphereLight(0xffffff, 0x777777, 2.2));
@@ -1221,6 +1253,9 @@ makeDirectionArrow('C', new THREE.Vector3(0,-1, 0), 0.95);
 
 let cubies = [];
 let stickers = [];
+let bodyMeshes = [];
+const selectionHighlights = [];
+const activeSelectionHighlights = new Set();
 let cubeDims = { n:3, m:3, r:3 };
 const selectedCubies = new Set();
 const groups = new Set();
@@ -1230,6 +1265,10 @@ const redoStack = [];
 const spacing = 1.06;
 const cubieSize = 0.99;
 const stickerGap = 0.012;
+let shadow = null;
+const bodyGeometry = new THREE.BoxGeometry(cubieSize, cubieSize, cubieSize);
+const bodyMaterial = new THREE.MeshBasicMaterial({ color:0x111111 });
+const stickerGeometry = new THREE.PlaneGeometry(0.945, 0.945);
 
 const faceDefs = [
   { key:'px', normal:new THREE.Vector3( 1,0,0), rot:new THREE.Euler(0, Math.PI/2, 0) },
@@ -1269,12 +1308,8 @@ function textTexture(bg, text, visible=true, bold=false) {
   return t;
 }
 
-function makeSticker(cubie, face, colorName) {
-  const label = cubie.userData.id;
-  const geo = new THREE.PlaneGeometry(0.945,0.945);
-  const tex = textTexture(COLORS[colorName], label, true);
-  const mat = new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide });
-  const mesh = new THREE.Mesh(geo, mat);
+function makeSticker(cubie, face, colorName, material) {
+  const mesh = new THREE.Mesh(stickerGeometry, material);
   mesh.rotation.copy(face.rot);
   const p = face.normal.clone().multiplyScalar(cubieSize/2 + stickerGap);
   mesh.position.copy(p);
@@ -1291,13 +1326,14 @@ function makeSticker(cubie, face, colorName) {
     side:THREE.DoubleSide,
     depthWrite:false
   });
-  const highlight = new THREE.Mesh(geo.clone(), highlightMat);
+  const highlight = new THREE.Mesh(stickerGeometry, highlightMat);
   highlight.rotation.copy(face.rot);
   const hp = face.normal.clone().multiplyScalar(cubieSize/2 + stickerGap + 0.004);
   highlight.position.copy(hp);
   highlight.visible = false;
   highlight.userData = { type:'selectionHighlight', cubie, highlightTargetOpacity:0 };
   cubie.add(highlight);
+  selectionHighlights.push(highlight);
 
   stickers.push(mesh);
   return mesh;
@@ -1320,26 +1356,41 @@ function clearCube() {
     }
   }
 
+  const disposedMaterials = new Set();
+  const disposedTextures = new Set();
+
   for (const root of [structureRoot, groupsRoot]) {
     while (root.children.length) {
       const object = root.children[root.children.length - 1];
       root.remove(object);
       object.traverse(child => {
-        if (child.isMesh) {
-          child.geometry?.dispose();
-          if (child.material) {
-            const materials = Array.isArray(child.material) ? child.material : [child.material];
-            for (const material of materials) {
-              if (material.map) material.map.dispose();
-              material.dispose();
-            }
+        if (!child.isMesh) return;
+
+        if (child.geometry &&
+            child.geometry !== bodyGeometry &&
+            child.geometry !== stickerGeometry) {
+          child.geometry.dispose();
+        }
+
+        if (!child.material) return;
+        const materials = Array.isArray(child.material) ? child.material : [child.material];
+        for (const material of materials) {
+          if (material === bodyMaterial || disposedMaterials.has(material)) continue;
+          if (material.map && !disposedTextures.has(material.map)) {
+            disposedTextures.add(material.map);
+            material.map.dispose();
           }
+          material.dispose();
+          disposedMaterials.add(material);
         }
       });
     }
   }
   cubies = [];
   stickers = [];
+  bodyMeshes = [];
+  selectionHighlights.length = 0;
+  activeSelectionHighlights.clear();
   selectedCubies.clear();
   groups.clear();
   activeGroup = null;
@@ -1356,18 +1407,25 @@ function createCubie(x,y,z) {
   group.userData = {
     x:lx, y:ly, z:lz, id, homeId:id,
     homePosition: new THREE.Vector3(lx*spacing, ly*spacing, lz*spacing),
-    homeQuaternion: new THREE.Quaternion()
+    homeQuaternion: new THREE.Quaternion(),
+    colorName: 'white',
+    textureConfig: 'white|1|0'
   };
   group.position.copy(group.userData.homePosition);
   group.quaternion.copy(group.userData.homeQuaternion);
 
-  const bodyGeo = new THREE.BoxGeometry(cubieSize,cubieSize,cubieSize);
-  const bodyMat = new THREE.MeshBasicMaterial({ color:0x111111 });
-  const body = new THREE.Mesh(bodyGeo, bodyMat);
+  const stickerTexture = textTexture(COLORS.white, id, true);
+  const stickerMaterial = new THREE.MeshBasicMaterial({ map: stickerTexture, side: THREE.DoubleSide });
+  group.userData.stickerMaterial = stickerMaterial;
+  group.userData.colorName = 'white';
+  group.userData.textureConfig = 'white|1|0';
+
+  const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
   body.userData = { type:'body', cubie:group };
   group.add(body);
+  bodyMeshes.push(body);
 
-  for (const face of faceDefs) makeSticker(group, face, 'white');
+  for (const face of faceDefs) makeSticker(group, face, 'white', stickerMaterial);
 
   structureRoot.add(group);
   cubies.push(group);
@@ -1378,20 +1436,58 @@ function fitCameraToCube() {
   const h = viewer.clientHeight;
   if (w <= 0 || h <= 0) return;
 
+  cubeRoot.updateMatrixWorld(true);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
 
   // Fit only the actual block structure, not the arrows or labels.
   const box = new THREE.Box3().setFromObject(structureRoot);
+  if (box.isEmpty()) return;
+
   const center = box.getCenter(new THREE.Vector3());
-  const sphere = box.getBoundingSphere(new THREE.Sphere());
 
   // Keep the same pleasant diagonal viewing direction.
   const viewDirection = new THREE.Vector3(-1, 0.73, -1).normalize();
+  const forward = viewDirection.clone().negate();
+  const worldUp = new THREE.Vector3(0, 1, 0);
+  const right = forward.clone().cross(worldUp).normalize();
+  const up = right.clone().cross(forward).normalize();
+
   const vFov = THREE.MathUtils.degToRad(camera.fov);
   const hFov = 2 * Math.atan(Math.tan(vFov / 2) * camera.aspect);
-  const limitingFov = Math.min(vFov, hFov);
-  const distance = (sphere.radius / Math.sin(limitingFov / 2)) * 1.12;
+  const tanV = Math.tan(vFov / 2);
+  const tanH = Math.tan(hFov / 2);
+
+  // Compute the required camera distance from the projected bounding-box
+  // corners. Unlike a bounding sphere, this fits elongated systems tightly
+  // in both portrait and landscape layouts.
+  const corners = [
+    new THREE.Vector3(box.min.x, box.min.y, box.min.z),
+    new THREE.Vector3(box.min.x, box.min.y, box.max.z),
+    new THREE.Vector3(box.min.x, box.max.y, box.min.z),
+    new THREE.Vector3(box.min.x, box.max.y, box.max.z),
+    new THREE.Vector3(box.max.x, box.min.y, box.min.z),
+    new THREE.Vector3(box.max.x, box.min.y, box.max.z),
+    new THREE.Vector3(box.max.x, box.max.y, box.min.z),
+    new THREE.Vector3(box.max.x, box.max.y, box.max.z)
+  ];
+
+  let distance = 0;
+  for (const corner of corners) {
+    const offset = corner.clone().sub(center);
+    const depth = offset.dot(forward);
+    distance = Math.max(
+      distance,
+      Math.abs(offset.dot(right)) / tanH - depth,
+      Math.abs(offset.dot(up)) / tanV - depth
+    );
+  }
+
+  // Small margin so the outermost blocks do not touch the viewport edge.
+  distance = Math.max(1.0, distance * 1.04);
+
+  // Allow enough zoom-out distance for the largest permitted dimensions.
+  controls.maxDistance = Math.max(60, distance * 1.5);
 
   controls.target.copy(center);
   camera.position.copy(center).add(viewDirection.multiplyScalar(distance));
@@ -1399,10 +1495,19 @@ function fitCameraToCube() {
   controls.update();
 }
 
+const flatTilesById = new Map();
+
+function forEachFlatTile(cubie, callback) {
+  const tile = flatTilesById.get(String(cubie.userData.homeId));
+  if (tile) callback(tile);
+}
+
 function buildFlatNet(axis = window.flatAxis || null) {
   flatNet.innerHTML = '';
+  flatTilesById.clear();
 
   if (!axis) {
+    window.flatAxis = null;
     flatNet.hidden = true;
     document.querySelectorAll('.flatDirBtn').forEach(b => b.classList.remove('active'));
     return;
@@ -1467,11 +1572,11 @@ function buildFlatNet(axis = window.flatAxis || null) {
 
   // Size the sidebar to fit the full header row and all flattened columns.
   // Keep only a small symmetric gap around the content.
-  const contentWidth = cols * (tile - 1);
+  const sideGap = 10;
+const contentWidth = cols * tile + (cols - 1) + 2 * sideGap + 21;
   // The direction/order controls now live inside the floating left panel,
   // so include their full width when sizing the panel.
   const controlWidth = flatDirections.scrollWidth;
-  const sideGap = 10;
   const panelWidth = Math.max(
     contentWidth + sideGap * 2,
     controlWidth + sideGap * 2
@@ -1510,8 +1615,9 @@ function buildFlatNet(axis = window.flatAxis || null) {
         tileEl.dataset.cubieId = cubie.userData.homeId;
         tileEl.userData = { cubie };
         tileEl.textContent = cubie.userData.id;
+        flatTilesById.set(String(cubie.userData.homeId), tileEl);
 
-        const colorName = cubie.children.find(s => s.userData?.type === 'sticker')?.userData?.colorName || 'white';
+        const colorName = getCubieColorName(cubie);
         const colorValue = COLORS[colorName] ?? COLORS.white;
         tileEl.style.background = '#' + colorValue.toString(16).padStart(6,'0');
 
@@ -1556,9 +1662,7 @@ function buildCube(n=3, m=3, r=3) {
       for (let z=0; z<r; z++)
         createCubie(x,y,z);
 
-  const scale = 3 / Math.max(n,m,r);
-  cubeRoot.scale.setScalar(scale);
-
+  updateShadow();
   updateDirectionMarkers();
   buildFlatNet();
 }
@@ -1569,8 +1673,19 @@ function buildCube(n=3, m=3, r=3) {
 
 /* Selected-block ket conversion.  This is intentionally self-contained so
    the rest of the cube code remains unchanged. */
+let lastKetSelectionKey = null;
+let lastKetVisible = null;
+
 function ketSelectedStates() {
-  if (!showKet.checked) {
+  const visible = showKet.checked;
+
+  // The ket depends only on the selected home IDs. During mouse dragging the
+  // selection normally does not change, so do not repeat the decomposition or
+  // rebuild the DOM on every pointer event.
+  if (!visible) {
+    if (lastKetVisible === false) return;
+    lastKetVisible = false;
+    lastKetSelectionKey = null;
     ketBox.classList.remove('visible');
     ketBox.innerHTML = '';
     return;
@@ -1588,12 +1703,31 @@ function ketSelectedStates() {
 
   selected.sort((a,b) => a.localeCompare(b));
 
+  const selectionKey = selected.join('\x1f');
+  if (lastKetVisible === true && lastKetSelectionKey === selectionKey) return;
+  lastKetVisible = true;
+  lastKetSelectionKey = selectionKey;
+
   if (!selected.length) {
     ketBox.classList.remove('visible');
     ketBox.innerHTML = '';
     return;
   }
+  // A single basis state is a product ket, not a decomposed sum.
+  if (selected.length === 1) {
+    ketBox.innerHTML = '';
+    const line = document.createElement('div');
+    line.className = 'ketLine';
 
+    const id = selected[0];
+    line.appendChild(ketElement(id[0], 'A'));
+    line.appendChild(ketElement(id[1], 'B'));
+    line.appendChild(ketElement(id[2], 'C'));
+
+    ketBox.appendChild(line);
+    ketBox.classList.add('visible');
+    return;
+  }
   const solution = findKetDecomposition(selected);
   const line = document.createElement('div');
   line.className = 'ketLine';
@@ -1625,10 +1759,6 @@ function ketElement(label, subscript = '') {
     span.appendChild(sub);
   }
   return span;
-}
-
-function addKetPlus(parent, values) {
-  return ketElement(values.join('+'));
 }
 
 function appendKetFull(parent, g) {
@@ -1664,23 +1794,20 @@ function stateMask(states, index) {
   return mask;
 }
 
-function popcountMask(mask) {
-  let n = 0;
-  while (mask) {
-    mask &= (mask - 1n);
-    n++;
-  }
-  return n;
-}
+const subsetCache = new Map();
 
 function subsetValues(values) {
   const vals = [...new Set(values)].sort((a,b)=>a-b);
+  const cacheKey = vals.join(',');
+  if (subsetCache.has(cacheKey)) return subsetCache.get(cacheKey);
+
   const out = [];
   for (let mask=1; mask<(1<<vals.length); mask++) {
     const a=[];
     for (let i=0;i<vals.length;i++) if (mask&(1<<i)) a.push(vals[i]);
     out.push(a);
   }
+  subsetCache.set(cacheKey, out);
   return out;
 }
 
@@ -1692,6 +1819,13 @@ function fullProductCandidates(selected, index) {
   const Avals = [...new Set(selected.map(s=>Number(s[0])))].sort((a,b)=>a-b);
   const Bvals = [...new Set(selected.map(s=>Number(s[1])))].sort((a,b)=>a-b);
   const Cvals = [...new Set(selected.map(s=>Number(s[2])))].sort((a,b)=>a-b);
+
+  const productSize = Avals.length * Bvals.length * Cvals.length;
+  if (selected.length === productSize) {
+    const states = [...selected];
+    const mask = stateMask(states, index);
+    return [{ type:'full', A:Avals, B:Bvals, C:Cvals, states, mask }];
+  }
 
   const Asets = subsetValues(Avals);
   const Bsets = subsetValues(Bvals);
@@ -1737,7 +1871,7 @@ function fullProductCandidates(selected, index) {
   // Keep only maximal full-product covers.
   return out.filter((x,i,arr)=>!arr.some((y,j)=>
     i!==j && x.states.length<y.states.length &&
-    x.states.every(s=>y.states.includes(s))
+    (x.mask & y.mask) === x.mask
   ));
 }
 
@@ -1801,6 +1935,9 @@ function bipCandidates(selected, index) {
 function findKetDecomposition(selected) {
   const index=new Map(selected.map((s,i)=>[s,i]));
   const full=fullProductCandidates(selected,index);
+  const fullCover = full.find(c => c.states.length === selected.length);
+  if (fullCover) return { terms:1, fullCoverage:selected.length, bipCoverage:0, groups:[fullCover], remainder:[] };
+
   const fullMaskSet=new Set(full.map(c=>String(c.mask)));
   const bip=bipCandidates(selected,index).filter(c=>!fullMaskSet.has(String(c.mask)));
   const candidates=[...full,...bip];
@@ -1886,7 +2023,15 @@ function findKetDecomposition(selected) {
 }
 
 function updateDirectionMarkers() {
-  ketSelectedStates();
+  // No marker geometry is needed while the A-B-C directions are hidden.
+  // The showAxes change handler already controls visibility, so this is only
+  // an optimization and does not change the visible behaviour.
+  if (!showAxes.checked) {
+    directionArrows.forEach(({arrow}) => arrow.visible = false);
+    directionLabels.forEach(label => label.visible = false);
+    return;
+  }
+
   // Determine the selected separated group from the current selection itself.
   // Do not rely only on activeGroup: when several groups are selected and one
   // is later deselected, activeGroup can become null even though exactly one
@@ -2155,7 +2300,7 @@ flatOrderBtn.addEventListener('click', () => {
 });
 
 
-async function exportCurrentViewToPDF(saveAs = false) {
+async function exportCurrentViewToPDF(saveAs = false, format = 'pdf', saveHandle = null) {
   const viewWidth = Math.max(1, viewer.clientWidth);
   const viewHeight = Math.max(1, viewer.clientHeight);
 
@@ -2237,13 +2382,46 @@ async function exportCurrentViewToPDF(saveAs = false) {
     cropCanvas.height = cropH;
 
     const cropCtx = cropCanvas.getContext('2d');
-    cropCtx.fillStyle = '#ffffff';
-    cropCtx.fillRect(0, 0, cropW, cropH);
+    if (format === 'pdf') {
+      cropCtx.fillStyle = '#dcdcdc';
+      cropCtx.fillRect(0, 0, cropW, cropH);
+    }
     cropCtx.drawImage(
       ctx.canvas,
       minX, minY, cropW, cropH,
       0, 0, cropW, cropH
     );
+
+    if (format === 'png') {
+      const pngBlob = await new Promise(resolve => cropCanvas.toBlob(resolve, 'image/png'));
+      if (!pngBlob) throw new Error('PNG encoding failed.');
+
+      const filename = '3d_tile_structure_view.png';
+      if (saveHandle) {
+        const writable = await saveHandle.createWritable();
+        await writable.write(pngBlob);
+        await writable.close();
+      } else if (saveAs) {
+        const url = URL.createObjectURL(pngBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      } else {
+        const url = URL.createObjectURL(pngBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+      return;
+    }
 
     const jpeg = cropCanvas.toDataURL('image/jpeg', 0.98);
     const raw = atob(jpeg.split(',')[1]);
@@ -2340,33 +2518,19 @@ async function exportCurrentViewToPDF(saveAs = false) {
 
     const pdfBlob = new Blob([pdf], {type:'application/pdf'});
 
-    if (saveAs) {
-      if ('showSaveFilePicker' in window) {
-        try {
-          const handle = await window.showSaveFilePicker({
-            suggestedName: '3d_tile_structure_view.pdf',
-            startIn: 'downloads',
-            types: [{
-              description: 'PDF file',
-              accept: {'application/pdf': ['.pdf']}
-            }]
-          });
-          const writable = await handle.createWritable();
-          await writable.write(pdfBlob);
-          await writable.close();
-        } catch (err) {
-          if (err?.name !== 'AbortError') throw err;
-        }
-      } else {
-        const url = URL.createObjectURL(pdfBlob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = '3d_tile_structure_view.pdf';
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-      }
+    if (saveHandle) {
+      const writable = await saveHandle.createWritable();
+      await writable.write(pdfBlob);
+      await writable.close();
+    } else if (saveAs) {
+      const url = URL.createObjectURL(pdfBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = '3d_tile_structure_view.pdf';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     } else {
       // Download icon: direct download using the browser's default download location.
       const url = URL.createObjectURL(pdfBlob);
@@ -2379,8 +2543,9 @@ async function exportCurrentViewToPDF(saveAs = false) {
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
   } catch (err) {
-    console.error('PDF export failed:', err);
-    alert('Could not create the PDF file.');
+    const formatLabel = format === 'png' ? 'PNG' : 'PDF';
+    console.error(`${formatLabel} export failed:`, err);
+    alert(`Could not create the ${formatLabel} file.`);
   } finally {
     renderer.setPixelRatio(oldPixelRatio);
     renderer.setSize(viewWidth, viewHeight, false);
@@ -2402,14 +2567,44 @@ async function exportCurrentViewToPDF(saveAs = false) {
   }
 }
 
+// A subtle shadow-like ellipse beneath the cube. Its footprint follows the
+// cube's A-B base dimensions, while its height follows the lowest block so
 // A subtle shadow-like plane under the cube.
-const shadow = new THREE.Mesh(
+const shadowReferenceBase = (3 - 1) * spacing + cubieSize;
+const shadowReferenceBottomY = -((3 - 1) * spacing) / 2 - cubieSize / 2;
+const shadowReferenceOffsetY = -2.15 - shadowReferenceBottomY;
+
+shadow = new THREE.Mesh(
   new THREE.CircleGeometry(3.3, 64),
-  new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:0.07, depthWrite:false})
+  new THREE.MeshBasicMaterial({
+    color:0x000000,
+    transparent:true,
+    opacity:0.07,
+    depthWrite:false
+  })
 );
 shadow.rotation.x = -Math.PI/2;
-shadow.position.y = -2.15;
 scene.add(shadow);
+
+function updateShadow() {
+  if (!shadow) return;
+
+  const baseWidth = Math.max(cubieSize, (cubeDims.n - 1) * spacing + cubieSize);
+  const baseDepth = Math.max(cubieSize, (cubeDims.m - 1) * spacing + cubieSize);
+  const bottomY = -((cubeDims.r - 1) * spacing) / 2 - cubieSize / 2;
+
+  // Preserve the reference shadow geometry and appearance, while scaling its
+  // footprint with the actual A-B base and placing it below the lowest layer.
+  shadow.position.set(0, bottomY + shadowReferenceOffsetY, 0);
+  shadow.scale.set(
+    baseWidth / shadowReferenceBase,
+    baseDepth / shadowReferenceBase,
+    1
+  );
+  shadow.visible = showShadow.checked;
+}
+
+updateShadow();
 
 let MAX_HISTORY = 5;
 
@@ -2450,7 +2645,6 @@ function snapshot() {
 
   const blockIds = new Array(cubies.length);
   const matrices = new Float32Array(cubies.length * 16);
-  const groupIds = new Array(cubies.length);
   const separated = new Uint8Array(cubies.length);
   const colors = new Array(cubies.length);
 
@@ -2458,7 +2652,6 @@ function snapshot() {
     const c = cubies[i];
     blockIds[i] = c.userData.homeId;
     colors[i] = c.children.find(s => s.userData?.type === 'sticker')?.userData.colorName || 'white';
-    groupIds[i] = c.userData.group?.name || null;
     separated[i] = c.userData.separated === true ? 1 : 0;
 
     const m = matrixRelativeToCubeRoot(c, rootInverse);
@@ -2485,7 +2678,6 @@ function snapshot() {
     blockIds,
     colors,
     matrices,
-    groupIds,
     separated,
     groups: groupsState
   };
@@ -2539,18 +2731,13 @@ function restore(state) {
   cubeRoot.updateMatrixWorld(true);
 
   const byId = new Map(cubies.map(c => [String(c.userData.homeId), c]));
-  const savedIndexById = new Map();
-  for (let i = 0; i < (state.blockIds || []).length; i++) {
-    savedIndexById.set(String(state.blockIds[i]), i);
-  }
-
   // Restore colours only when the saved colour actually differs. This avoids
   // generating six new canvas textures per cubie on every Undo/Redo.
   const savedColors = state.colors || [];
   for (let i = 0; i < savedColors.length; i++) {
     const c = byId.get(String(state.blockIds?.[i]));
     if (!c) continue;
-    const currentColor = c.children.find(s => s.userData?.type === 'sticker')?.userData?.colorName || 'white';
+    const currentColor = getCubieColorName(c);
     if (currentColor !== savedColors[i]) setCubieTexture(c, savedColors[i]);
   }
 
@@ -2637,6 +2824,7 @@ function restore(state) {
 
   updateGroupButtons();
   updateFlatSelection();
+  ketSelectedStates();
   updateDirectionMarkers();
 
   // Undo/Redo must never move the camera.
@@ -2721,52 +2909,73 @@ function updateHistoryButtons() {
 }
 
 function setCubieTexture(cubie, colorName) {
-  const label = cubie.userData.id;
-  for (const sticker of cubie.children) {
-    if (sticker.userData?.type !== 'sticker') continue;
-    const oldMap = sticker.material.map;
-    sticker.material.map = textTexture(COLORS[colorName], label, showNumbers.checked, false);
-    sticker.material.needsUpdate = true;
-    sticker.userData.colorName = colorName;
-    if (oldMap) oldMap.dispose();
+  const material = cubie.userData.stickerMaterial;
+  if (!material) return;
+
+  const textureConfig = `${colorName}|${showNumbers.checked ? '1' : '0'}|0`;
+  cubie.userData.colorName = colorName;
+  if (cubie.userData.textureConfig === textureConfig && material.map) {
+    updateFlatTileColor(cubie);
+    return;
   }
+
+  const oldMap = material.map;
+  material.map = textTexture(COLORS[colorName], cubie.userData.id, showNumbers.checked, false);
+  material.needsUpdate = true;
+  cubie.userData.textureConfig = textureConfig;
+
+  for (const sticker of cubie.children) {
+    if (sticker.userData?.type === 'sticker') sticker.userData.colorName = colorName;
+  }
+
+  if (oldMap) oldMap.dispose();
   updateFlatTileColor(cubie);
 }
 
-function updateStickerTexture(sticker, colorName){
-  const oldMap = sticker.material.map;
-  sticker.material.map = textTexture(COLORS[colorName], sticker.userData.cubie.userData.id, showNumbers.checked, sticker.userData.cubie.userData.selected === true);
-  sticker.material.needsUpdate = true;
-  sticker.userData.colorName = colorName;
-  if (oldMap) oldMap.dispose();
-}
+function updateNumberVisibility() {
+  for (const cubie of cubies) {
+    const material = cubie.userData.stickerMaterial;
+    if (!material) continue;
 
-function updateNumberVisibility(){
-  for (const s of stickers) updateStickerTexture(s, s.userData.colorName);
+    const oldMap = material.map;
+    material.map = textTexture(
+      COLORS[getCubieColorName(cubie)],
+      cubie.userData.id,
+      showNumbers.checked,
+      cubie.userData.selected === true
+    );
+    material.needsUpdate = true;
+    cubie.userData.textureConfig = `${getCubieColorName(cubie)}|${showNumbers.checked ? '1' : '0'}|${cubie.userData.selected === true ? '1' : '0'}`;
+    if (oldMap) oldMap.dispose();
+  }
 }
 
 function updateFlatTileColor(cubie) {
-  const colorName = cubie.children.find(s => s.userData?.type === 'sticker')?.userData?.colorName || 'white';
+  const colorName = getCubieColorName(cubie);
   const value = COLORS[colorName] ?? COLORS.white;
   const hex = '#' + value.toString(16).padStart(6, '0');
-  document.querySelectorAll(`.flatTile[data-cubie-id="${cubie.userData.homeId}"]`).forEach(tile => {
+  forEachFlatTile(cubie, tile => {
     // The background always represents the actual cubie's colour.
     // Selection/hover are rendered separately as translucent overlays.
     tile.style.background = hex;
   });
 }
 
-function updateFlatSelection() {
-  document.querySelectorAll('.flatTile').forEach(tile => {
+function updateFlatSelection(changedCubies = null) {
+  const tiles = changedCubies
+    ? changedCubies.map(c => flatTilesById.get(String(c.userData.homeId))).filter(Boolean)
+    : flatTilesById.values();
+
+  for (const tile of tiles) {
     const cubie = tile.userData.cubie;
     const selected = selectedCubies.has(cubie);
     tile.classList.toggle('selected', selected);
 
     // Keep the actual flattened colour synchronized with the 3D block.
-    const colorName = cubie.children.find(s => s.userData?.type === 'sticker')?.userData?.colorName || 'white';
+    const colorName = getCubieColorName(cubie);
     const value = COLORS[colorName] ?? COLORS.white;
     tile.style.background = '#' + value.toString(16).padStart(6, '0');
-  });
+  }
 }
 
 let paletteHoverActive = false;
@@ -2775,27 +2984,18 @@ const paletteHoverOriginalColors = new Map();
 // Flattened-block hover mirrors the original-cube hover.
 let flatHoverEntity = null;
 let flatHoverOriginalColors = new Map();
-let flatHoverOriginalTileStyles = new Map();
 
 function getCubieColorName(cubie) {
-  return cubie.children.find(s => s.userData?.type === 'sticker')?.userData?.colorName || 'white';
+  return cubie.userData?.colorName || 'white';
 }
 
 function animateSelectionHighlight(cubie, targetOpacity) {
   for (const child of cubie.children) {
     if (child.userData?.type !== 'selectionHighlight') continue;
     child.userData.highlightTargetOpacity = targetOpacity;
-    // Keep it in the render loop while it fades either in or out.
+    // Keep it in the render loop only while it is actually animating.
     child.visible = targetOpacity > 0 || child.material.opacity > 0.002;
-  }
-}
-
-function setSelectionHighlightVisible(cubie, visible) {
-  for (const child of cubie.children) {
-    if (child.userData?.type !== 'selectionHighlight') continue;
-    child.visible = visible;
-    child.material.opacity = visible ? 0.52 : 0;
-    child.userData.highlightTargetOpacity = visible ? 0.52 : 0;
+    activeSelectionHighlights.add(child);
   }
 }
 
@@ -2823,9 +3023,7 @@ function previewPaletteColor(name) {
     // The flattened panel uses a CSS overlay for selected blocks. Hide that
     // overlay during the palette preview so the temporary colour is visible
     // there exactly as it is on the 3D cube.
-    document.querySelectorAll(`.flatTile[data-cubie-id="${cubie.userData.homeId}"]`).forEach(tile => {
-      tile.classList.add('paletteHoverPreview');
-    });
+    forEachFlatTile(cubie, tile => tile.classList.add('paletteHoverPreview'));
   }
 }
 
@@ -2843,9 +3041,7 @@ function restorePalettePreview() {
   // always bring the selection indication back in both views.
   for (const cubie of selectedCubies) {
     animateSelectionHighlight(cubie, 0.52);
-    document.querySelectorAll(`.flatTile[data-cubie-id="${cubie.userData.homeId}"]`).forEach(tile => {
-      tile.classList.remove('paletteHoverPreview');
-    });
+    forEachFlatTile(cubie, tile => tile.classList.remove('paletteHoverPreview'));
   }
 
   document.querySelectorAll('.flatTile.paletteHoverPreview').forEach(tile => {
@@ -2868,9 +3064,7 @@ function commitPaletteClick(name) {
       // Keep the flattened-panel selection highlight hidden while the
       // pointer is still inside the colour palette. The colour is now
       // committed, so this class only suppresses the visual overlay.
-      document.querySelectorAll(`.flatTile[data-cubie-id="${cubie.userData.homeId}"]`).forEach(tile => {
-        tile.classList.add('paletteHoverPreview');
-      });
+      forEachFlatTile(cubie, tile => tile.classList.add('paletteHoverPreview'));
     }
   }
 
@@ -2968,16 +3162,74 @@ showAxes.addEventListener('change', () => {
 });
 showKet.addEventListener('change', ketSelectedStates);
 showShadow.addEventListener('change', () => { shadow.visible = showShadow.checked; });
+
+async function saveCurrentViewAs() {
+  if (!('showSaveFilePicker' in window)) {
+    // Older browsers cannot provide a native Save As type selector.
+    openDownloadMenu(true);
+    return;
+  }
+
+  try {
+    const handle = await window.showSaveFilePicker({
+      suggestedName: '3d_tile_structure_view',
+      startIn: 'downloads',
+      types: [
+        {
+          description: 'PDF file',
+          accept: {'application/pdf': ['.pdf']}
+        },
+        {
+          description: 'PNG image',
+          accept: {'image/png': ['.png']}
+        }
+      ]
+    });
+
+    const name = handle.name.toLowerCase();
+    const format = name.endsWith('.png') ? 'png' : 'pdf';
+    await exportCurrentViewToPDF(false, format, handle);
+  } catch (err) {
+    if (err?.name !== 'AbortError') {
+      console.error('Save As failed:', err);
+      alert('Could not save the file.');
+    }
+  }
+}
+
+let downloadSaveAs = false;
+
+function openDownloadMenu(saveAs = false) {
+  downloadSaveAs = saveAs;
+  downloadMenu.classList.add('open');
+  downloadMenu.setAttribute('aria-hidden', 'false');
+}
+
+function closeDownloadMenu() {
+  downloadMenu.classList.remove('open');
+  downloadMenu.setAttribute('aria-hidden', 'true');
+}
+
 exportPdfBtn.addEventListener('click', (e) => {
   e.stopPropagation();
-  exportCurrentViewToPDF(false);
+  openDownloadMenu(false);
+});
+
+downloadMenu.querySelectorAll('[data-download-format]').forEach(btn => {
+  btn.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    const format = btn.dataset.downloadFormat;
+    const saveAs = downloadSaveAs;
+    closeDownloadMenu();
+    await exportCurrentViewToPDF(saveAs, format);
+  });
 });
 
 historyTab.addEventListener('click', (e) => {
   e.stopPropagation();
   const open = historySettings.classList.toggle('open');
   historySettings.setAttribute('aria-hidden', String(!open));
-  historyTab.innerHTML = open ? '⚙' : '⚙';
+  historyTab.textContent = '⚙';
 });
 
 function closeContact() {
@@ -3043,7 +3295,10 @@ document.addEventListener('pointerdown', (e) => {
   if (!historySettings.contains(e.target) && e.target !== historyTab) {
     historySettings.classList.remove('open');
     historySettings.setAttribute('aria-hidden', 'true');
-    historyTab.innerHTML = '⚙';
+    historyTab.textContent = '⚙';
+  }
+  if (!downloadMenu.contains(e.target) && e.target !== exportPdfBtn) {
+    closeDownloadMenu();
   }
 });
 
@@ -3120,15 +3375,17 @@ function setCubieSelected(cubie, selected, refreshFlat = true) {
   // through translucent light-blue overlays, like an Office-style highlight.
   // Use the animation target instead of switching visibility immediately.
   animateSelectionHighlight(cubie, selected ? 0.52 : 0);
-  if (refreshFlat) updateFlatSelection();
+  if (refreshFlat) updateFlatSelection([cubie]);
 }
 
 function clearSelection() {
-  for (const cubie of [...selectedCubies]) setCubieSelected(cubie, false, false);
+  const previouslySelected = [...selectedCubies];
+  for (const cubie of previouslySelected) setCubieSelected(cubie, false, false);
   selectedCubies.clear();
   activeGroup = null;
-  updateFlatSelection();
+  updateFlatSelection(previouslySelected);
   updateGroupButtons();
+  ketSelectedStates();
   updateDirectionMarkers();
 }
 
@@ -3144,10 +3401,11 @@ function toggleCubieSelection(cubie) {
   for (const member of groupMembers) {
     setCubieSelected(member, shouldSelect, false);
   }
-  updateFlatSelection();
+  updateFlatSelection(groupMembers);
 
   activeGroup = shouldSelect ? (group || null) : null;
   updateGroupButtons();
+  ketSelectedStates();
   updateDirectionMarkers();
 }
 
@@ -3156,7 +3414,7 @@ function getPickedCubie(e) {
   pointer.x = ((e.clientX-r.left)/r.width)*2-1;
   pointer.y = -((e.clientY-r.top)/r.height)*2+1;
   raycaster.setFromCamera(pointer,camera);
-  const hits = raycaster.intersectObjects(stickers,false);
+  const hits = raycaster.intersectObjects(bodyMeshes,false);
   return hits.length ? hits[0].object.userData.cubie : null;
 }
 
@@ -3165,7 +3423,6 @@ let dragState = null;
 // 3D cube hover is preview-only and never changes selection/history.
 let cubeHoverEntity = null;
 let cubeHoverOriginalColors = new Map();
-let cubeHoverOriginalTileStyles = new Map();
 
 function getHoverEntity(cubie) {
   if (!cubie) return [];
@@ -3189,15 +3446,11 @@ function restoreCubeHover() {
     animateSelectionHighlight(cubie, selectedCubies.has(cubie) ? 0.52 : 0);
   }
 
-  for (const tile of cubeHoverOriginalTileStyles.keys()) {
-    tile.classList.remove('flatHoverPreview', 'paletteHoverPreview');
-  }
   document.querySelectorAll('.flatTile.flatHoverPreview, .flatTile.paletteHoverPreview').forEach(tile => {
     tile.classList.remove('flatHoverPreview', 'paletteHoverPreview');
   });
 
   cubeHoverOriginalColors.clear();
-  cubeHoverOriginalTileStyles.clear();
   cubeHoverEntity = null;
 }
 
@@ -3210,9 +3463,6 @@ function restoreFlatHover() {
     }
   }
 
-  for (const tile of flatHoverOriginalTileStyles.keys()) {
-    tile.classList.remove('flatHoverPreview');
-  }
   document.querySelectorAll('.flatTile.flatHoverPreview').forEach(tile => {
     tile.classList.remove('flatHoverPreview');
   });
@@ -3222,7 +3472,6 @@ function restoreFlatHover() {
   }
 
   flatHoverOriginalColors.clear();
-  flatHoverOriginalTileStyles.clear();
   flatHoverEntity = null;
 }
 
@@ -3248,9 +3497,7 @@ function previewFlatHover(cubie) {
     for (const member of members) {
       if (selectedCubies.has(member)) continue;
 
-      document.querySelectorAll(`.flatTile[data-cubie-id="${member.userData.homeId}"]`).forEach(tile => {
-        tile.classList.add('flatHoverPreview');
-      });
+      forEachFlatTile(member, tile => tile.classList.add('flatHoverPreview'));
 
       animateSelectionHighlight(member, 0.52);
     }
@@ -3281,18 +3528,14 @@ function previewCubeHover(cubie) {
       // Mirror the colour-preview state in the flattened panel. The
       // palette-hover overlay must remain hidden there while the pointer is
       // hovering this block/group on the actual cube.
-      document.querySelectorAll(`.flatTile[data-cubie-id="${member.userData.homeId}"]`).forEach(tile => {
-        tile.classList.add('paletteHoverPreview');
-      });
+      forEachFlatTile(member, tile => tile.classList.add('paletteHoverPreview'));
     }
   } else {
     // Selection mode: mirror the hover on the corresponding flattened block.
     for (const member of members) {
       if (!selectedCubies.has(member)) {
         animateSelectionHighlight(member, 0.52);
-        document.querySelectorAll(`.flatTile[data-cubie-id="${member.userData.homeId}"]`).forEach(tile => {
-          tile.classList.add('flatHoverPreview');
-        });
+        forEachFlatTile(member, tile => tile.classList.add('flatHoverPreview'));
       }
     }
   }
@@ -3307,17 +3550,80 @@ function getSelectedMoveEntities() {
   return [...entities];
 }
 
+// Magnetically return a moved block/group to its permanent original position
+// when it comes sufficiently close to that position.
+const freeMoveSnapDistance = spacing;
+
+function updateReverseButtonForFreeMove(entities = getSelectedMoveEntities()) {
+  const hasSeparated = entities.some(entity => entity.userData?.separated === true);
+
+  // Reverse is always present in the control bar. It is enabled only while
+  // at least one selected block/group is away from its permanent position.
+  // The inline !important display keeps it visible even when another UI
+  // update has temporarily changed button visibility.
+  reverseBtn.hidden = false;
+  reverseBtn.removeAttribute('hidden');
+  reverseBtn.style.setProperty('display', 'flex', 'important');
+  reverseBtn.style.setProperty('visibility', 'visible', 'important');
+  reverseBtn.disabled = !hasSeparated;
+}
+
+function getEntityHomeCenters(entity) {
+  const members = entity.userData?.members?.length
+    ? entity.userData.members
+    : [entity];
+
+  const currentCenter = new THREE.Vector3();
+  const homeCenter = new THREE.Vector3();
+
+  for (const member of members) {
+    currentCenter.add(member.getWorldPosition(new THREE.Vector3()));
+    homeCenter.add(structureRoot.localToWorld(member.userData.homePosition.clone()));
+  }
+
+  const invCount = 1 / members.length;
+  currentCenter.multiplyScalar(invCount);
+  homeCenter.multiplyScalar(invCount);
+  return { currentCenter, homeCenter };
+}
+
+function markEntityAsHome(entity) {
+  entity.userData.separated = false;
+  entity.userData.separationDelta = new THREE.Vector3();
+  entity.userData.preSeparationPosition = null;
+}
+
+function snapEntityToHomeIfNear(entity) {
+  const { currentCenter, homeCenter } = getEntityHomeCenters(entity);
+
+  if (currentCenter.distanceTo(homeCenter) > freeMoveSnapDistance) return false;
+
+  const snapDelta = homeCenter.clone().sub(currentCenter);
+  const parent = entity.parent || cubeRoot;
+  const targetWorld = entity.getWorldPosition(new THREE.Vector3()).add(snapDelta);
+
+  entity.position.copy(parent.worldToLocal(targetWorld));
+  markEntityAsHome(entity);
+  return true;
+}
+
+// With Magnet off, do not move the entity automatically. If the user manually
+// places it essentially exactly at its original position, it is treated as home.
+const freeMoveHomeTolerance = 1e-6;
+
+function markEntityHomeIfPlacedThere(entity) {
+  const { currentCenter, homeCenter } = getEntityHomeCenters(entity);
+  if (currentCenter.distanceTo(homeCenter) > freeMoveHomeTolerance) return false;
+  markEntityAsHome(entity);
+  return true;
+}
+
 // A keyboard-arrow movement is one Free Move step. The step follows the
 // current camera's screen plane, so the four keyboard arrows always mean
 // up/down/left/right as seen in the current 3D view.
-const keyboardFreeMoveStep = spacing;
+const keyboardFreeMoveStep = spacing*1.15;
 
 function moveSelectedByKeyboard(direction) {
-  // Keyboard movement is only active in block-selection mode. This prevents
-  // arrow keys from moving a selection accidentally while a palette colour is
-  // active for painting.
-  //if (selectedColor !== null) return false;
-
   const entities = getSelectedMoveEntities();
   if (!entities.length) return false;
 
@@ -3364,6 +3670,15 @@ function moveSelectedByKeyboard(direction) {
     }
 
     entity.position.copy(targetLocal);
+
+    // Snap exactly back to the original position when the moved entity is
+    // sufficiently close. This also clears the separated state so Reverse
+    // disappears immediately.
+    const homeResolved = magnetToggle.checked
+      ? snapEntityToHomeIfNear(entity)
+      : markEntityHomeIfPlacedThere(entity);
+    if (homeResolved) continue;
+
     entity.userData.separated = true;
 
     const previousDelta = entity.userData.separationDelta instanceof THREE.Vector3
@@ -3373,9 +3688,21 @@ function moveSelectedByKeyboard(direction) {
   }
 
   updateGroupButtons();
+  updateReverseButtonForFreeMove(entities);
   updateFlatSelection();
   updateDirectionMarkers();
   return true;
+}
+
+let directionMarkerRaf = 0;
+
+function scheduleDirectionMarkersUpdate() {
+  if (!showAxes.checked) return;
+  if (directionMarkerRaf) return;
+  directionMarkerRaf = requestAnimationFrame(() => {
+    directionMarkerRaf = 0;
+    updateDirectionMarkers();
+  });
 }
 
 function startDragIfNeeded(e) {
@@ -3396,15 +3723,17 @@ function startDragIfNeeded(e) {
   const startHit=new THREE.Vector3();
   if(!raycaster.ray.intersectPlane(plane,startHit)) return;
   const startPositions=new Map();
+  const startWorldPositions=new Map();
   for(const entity of entities) {
     startPositions.set(entity,entity.position.clone());
+    startWorldPositions.set(entity,entity.getWorldPosition(new THREE.Vector3()));
   }
 
   // Record the exact pre-drag state BEFORE marking any previously-original
   // entity as separated. This makes one complete drag a single Undo step.
   prepareHistorySnapshot();
   const historyBeforeDrag = snapshot();
-  dragState={plane,startHit,entities,startPositions,historyBeforeDrag};
+  dragState={plane,startHit,entities,startPositions,startWorldPositions,historyBeforeDrag};
   pointerDown.dragging=true;
   undoStack.push(historyBeforeDrag);
   if (undoStack.length > MAX_HISTORY) undoStack.shift();
@@ -3424,9 +3753,10 @@ function startDragIfNeeded(e) {
   controls.enabled=false;
 
   // The entity becomes separated at the instant the free-move drag starts.
-  // Refresh the action buttons immediately so Reverse becomes enabled without
-  // requiring the user to deselect and reselect the moved selection.
+  // Refresh the action buttons immediately so Reverse becomes visible and
+  // enabled without requiring the user to deselect and reselect the selection.
   updateGroupButtons();
+  updateReverseButtonForFreeMove(entities);
   updateDirectionMarkers();
   renderer.domElement.setPointerCapture?.(e.pointerId); e.preventDefault();
 }
@@ -3439,10 +3769,14 @@ function updateDrag(e) {
   const hit=new THREE.Vector3();
   if(!raycaster.ray.intersectPlane(dragState.plane,hit)) return;
   const worldDelta=hit.sub(dragState.startHit);
+
+  // Magnet does not constrain the live drag. When enabled, attraction is
+  // checked only when the mouse button is released.
   for(const entity of dragState.entities){
     const parent=entity.parent||cubeRoot;
-    const startWorld=parent.localToWorld(dragState.startPositions.get(entity).clone());
-    entity.position.copy(parent.worldToLocal(startWorld.add(worldDelta)));
+    const startWorld=dragState.startWorldPositions.get(entity);
+    const targetWorld=startWorld.clone().add(worldDelta);
+    entity.position.copy(parent.worldToLocal(targetWorld));
 
     // Store the displacement made by this drag so the existing Reverse and
     // separation state continue to describe the moved entity correctly.
@@ -3450,20 +3784,61 @@ function updateDrag(e) {
     entity.userData.separationDelta = entity.position.clone().sub(startPos);
     entity.userData.separated = true;
   }
-  updateDirectionMarkers(); e.preventDefault();
+
+  // Reverse remains enabled/disabled for the whole drag according to the
+  // entity state established at drag start. No need to recompute it for every
+  // pointer event.
+  scheduleDirectionMarkersUpdate(); e.preventDefault();
 }
 
 function endDrag(e) {
   if(!dragState) return false;
+
+  // Apply automatic attraction only when Magnet is enabled. With Magnet off,
+  // the entity is never moved automatically; it is only recognized as home
+  // when the user manually places it essentially exactly there.
+  let homeResolved = false;
+  for (const entity of dragState.entities) {
+    if (magnetToggle.checked) {
+      if (snapEntityToHomeIfNear(entity)) homeResolved = true;
+    } else if (markEntityHomeIfPlacedThere(entity)) {
+      homeResolved = true;
+    }
+  }
+
+  const entities = dragState.entities;
   dragState=null; controls.enabled=true;
   renderer.domElement.releasePointerCapture?.(e.pointerId);
-  updateDirectionMarkers(); return true;
+
+  if (homeResolved) updateGroupButtons();
+  updateReverseButtonForFreeMove(entities);
+  updateDirectionMarkers();
+  return true;
 }
 
 renderer.domElement.addEventListener('pointerdown', e=>{
   restoreCubeHover();
-  const candidate=selectedColor===null ? getPickedCubie(e) : null;
-  pointerDown={x:e.clientX,y:e.clientY,candidate,dragging:false};
+
+  const candidate = selectedColor === null ? getPickedCubie(e) : null;
+
+  // Freeze the camera only when Free Move is enabled and the pressed block
+  // belongs to the current selection. All other pointer actions keep the
+  // normal camera behaviour.
+  if (
+    freeMoveEnabled &&
+    selectedColor === null &&
+    candidate &&
+    selectedCubies.has(candidate)
+  ) {
+    controls.enabled = false;
+  }
+
+  pointerDown = {
+    x:e.clientX,
+    y:e.clientY,
+    candidate,
+    dragging:false
+  };
 });
 
 renderer.domElement.addEventListener('pointermove', e=>{
@@ -3494,6 +3869,11 @@ flatPanel.addEventListener('mouseleave', restoreFlatHover);
 renderer.domElement.addEventListener('pointerup', e=>{
   if (!pointerDown) return;
   if (endDrag(e)) { pointerDown=null; return; }
+
+  // Re-enable the camera after a click/touch that did not become a Free Move
+  // drag. This affects only the selected-block press described above.
+  controls.enabled = true;
+
   const d=Math.hypot(e.clientX-pointerDown.x,e.clientY-pointerDown.y);
   pointerDown=null;
   if (d > 6) return;
@@ -3577,7 +3957,12 @@ function updateGroupButtons() {
     entity.userData?.separated === true
   );
 
+  // Reverse remains visible and is disabled only when the current selection
+  // contains no separated entity.
   reverseBtn.hidden = false;
+  reverseBtn.removeAttribute('hidden');
+  reverseBtn.style.setProperty('display', 'flex', 'important');
+  reverseBtn.style.setProperty('visibility', 'visible', 'important');
   reverseBtn.disabled = !hasSeparatedSelection;
 
 }
@@ -3625,12 +4010,12 @@ function ungroupActiveGroup() {
   updateDirectionMarkers();
 }
 
-function groupSelectedBlocks(skipHistory = false) {
+function groupSelectedBlocks() {
   // Never create a group from a single standalone block.
   if (selectedCubies.size === 1 &&
       ![...selectedCubies][0].userData.group) return;
   if (selectedCubies.size === 0) return;
-  if (!skipHistory) saveUndo();
+  saveUndo();
 
   // Resolve the selected entities first.  Selecting one member of a group
   // means selecting the whole group.
@@ -3978,11 +4363,6 @@ function reverseActiveGroup() {
   updateDirectionMarkers();
 }
 
-function disposeGroup(group) {
-  if (!group) return;
-  groups.delete(group);
-}
-
 function toggleSelectAll() {
   const allSelected = cubies.length > 0 && selectedCubies.size === cubies.length;
 
@@ -3995,14 +4375,8 @@ function toggleSelectAll() {
   updateFlatSelection();
   activeGroup = null;
   updateGroupButtons();
-  updateFlatSelection();
+  ketSelectedStates();
   updateDirectionMarkers();
-}
-
-function animateGroupControl(button) {
-  button.classList.remove('sort-animate');
-  void button.offsetWidth;
-  button.classList.add('sort-animate');
 }
 
 selectAllBtn.addEventListener('click', () => {
@@ -4072,6 +4446,8 @@ window.addEventListener('resize', resize);
 resize();
 requestAnimationFrame(() => fitCameraToCube());
 
+const arrowKeys = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
+
 if (typeof ResizeObserver !== 'undefined') {
   const ro = new ResizeObserver(() => resize());
   ro.observe(viewer);
@@ -4112,7 +4488,6 @@ function handleCubeShortcut(e) {
 
   // Bare keyboard arrow keys perform one automatic Free Move step on the
   // current selection. Never intercept them while typing in a form control.
-  const arrowKeys = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
   if (arrowKeys.has(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey) {
     const target = e.target;
     const tag = target && target.tagName ? String(target.tagName).toLowerCase() : '';
@@ -4130,12 +4505,12 @@ function handleCubeShortcut(e) {
   const ctrl = e.ctrlKey || e.metaKey;
   if (!ctrl) return;
 
-  // Ctrl+S / Cmd+S opens the PDF Save As dialog.
+  // Ctrl+S / Cmd+S opens the PNG/PDF Save As choices.
   if (key === 's' || code === 'KeyS') {
     e.__cubeShortcutHandled = true;
     e.preventDefault();
     e.stopImmediatePropagation();
-    exportCurrentViewToPDF(true);
+    saveCurrentViewAs();
     return;
   }
 
@@ -4181,15 +4556,23 @@ function handleCubeShortcut(e) {
 window.addEventListener('keydown', handleCubeShortcut, true);
 
 function updateSelectionHighlightAnimations() {
-  for (const cubie of cubies) {
-    for (const child of cubie.children) {
-      if (child.userData?.type !== 'selectionHighlight') continue;
-      const target = child.userData.highlightTargetOpacity;
-      if (typeof target !== 'number') continue;
-      const current = child.material.opacity;
-      const next = THREE.MathUtils.lerp(current, target, 0.22);
-      child.material.opacity = next;
-      child.visible = next > 0.002;
+  for (const highlight of activeSelectionHighlights) {
+    const target = highlight.userData.highlightTargetOpacity;
+    if (typeof target !== 'number') {
+      activeSelectionHighlights.delete(highlight);
+      continue;
+    }
+
+    const current = highlight.material.opacity;
+    const next = THREE.MathUtils.lerp(current, target, 0.22);
+
+    if (Math.abs(next - target) < 0.001) {
+      highlight.material.opacity = target;
+      highlight.visible = target > 0.002;
+      activeSelectionHighlights.delete(highlight);
+    } else {
+      highlight.material.opacity = next;
+      highlight.visible = next > 0.002;
     }
   }
 }
