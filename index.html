@@ -1179,6 +1179,42 @@ const freeMoveBtn = document.getElementById('freeMoveBtn');
 let freeMoveEnabled = false;
 const cubeFullscreenBtn = document.getElementById('cubeFullscreenBtn');
 const ketBox = document.getElementById('ketBox');
+
+function updateMainKetBoxBounds() {
+  if (cubeOnlyMode) return;
+
+  const viewerRect = ketBox.parentElement.getBoundingClientRect();
+  const sizeNRect = sizeN.getBoundingClientRect();
+  const viewportRect = document.documentElement.getBoundingClientRect();
+
+  // Use the actual left-screen -> #sizeN gap.
+  // This is 10 px on PC and 6 px on mobile with the current layout,
+  // and therefore remains independently correct for each device.
+  const leftGap = sizeNRect.left - viewportRect.left;
+
+  // Keep the same device-specific gap from the right screen edge.
+  const rightEdge = viewerRect.right - leftGap;
+  let leftEdge = viewportRect.left + leftGap;
+
+  // When the flattened panel is open, use the same gap between
+  // the panel's moving right edge and the ket box.
+  if (flatPanel.classList.contains('open')) {
+    const flatRect = flatPanel.getBoundingClientRect();
+    if (flatRect.right > viewerRect.left) {
+      leftEdge = flatRect.right + leftGap;
+    }
+  }
+
+  ketBox.style.maxWidth =
+    `${Math.max(34, Math.floor(rightEdge - leftEdge))}px`;
+}
+
+const ketLayoutObserver = new ResizeObserver(updateMainKetBoxBounds);
+ketLayoutObserver.observe(flatPanel);
+ketLayoutObserver.observe(sizeN);
+ketLayoutObserver.observe(ketBox.parentElement);
+window.addEventListener('resize', updateMainKetBoxBounds);
+requestAnimationFrame(updateMainKetBoxBounds);
 const showKet = document.getElementById('showKet');
 const showShadow = document.getElementById('showShadow');
 const magnetToggle = document.getElementById('magnetToggle');
@@ -1803,6 +1839,7 @@ function ketSelectedStates() {
   ketBox.innerHTML = '';
   ketBox.appendChild(line);
   ketBox.classList.add('visible');
+  updateMainKetBoxBounds();
 }
 
 function ketElement(label, subscript = '') {
@@ -2335,6 +2372,13 @@ flattenToggle.addEventListener('click', () => {
     resize();
     //fitCameraToCube();
   });
+
+  const ketTrackStart = performance.now();
+  const trackKetBounds = now => {
+    updateMainKetBoxBounds();
+    if (now - ketTrackStart < 240) requestAnimationFrame(trackKetBounds);
+  };
+  requestAnimationFrame(trackKetBounds);
 });
 
 document.querySelectorAll('.flatDirBtn[data-axis]').forEach(btn => {
