@@ -125,18 +125,19 @@
     background: rgba(255,255,255,.72);
     border-right: 1px solid #aaa;
     overflow: hidden;
-    padding: 18px 10px 10px;
+    padding: 10px 0px 10px;
     border-left: 0;
   }
   #flatDirections {
-    display: none;
-    gap: 4px;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    max-width: none;
-    flex: 0 0 auto;
-  }
+  display: none;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  max-width: none;
+  flex: 0 0 auto;
+  align-self: center;
+}
   #flatDirections.open {
     display: flex;
   }
@@ -196,6 +197,7 @@
     overflow: auto;
     width: max-content;
     max-width: none;
+align-self: center;
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
@@ -851,7 +853,7 @@ body.cubeOnlyMode #ketBox.visible {
       flex: 0 0 auto;
       width: max-content;
       min-width: 0;
-        padding: 7px;
+      padding: 7px 0px 7px;
     }
     #flattenToggle { left: 0; top: 50%; padding: 0; width: 20px; height: 46px; font-size: 14px; }
     #flatPanel.open { width: max-content; }
@@ -1572,15 +1574,12 @@ function buildFlatNet(axis = window.flatAxis || null) {
 
   // Size the sidebar to fit the full header row and all flattened columns.
   // Keep only a small symmetric gap around the content.
-  const sideGap = 10;
-const contentWidth = cols * tile + (cols - 1) + 2 * sideGap + 21;
+  const sideGap = 7;
+  const contentWidth = cols * (tile-1) + (cols - 1)*1;
   // The direction/order controls now live inside the floating left panel,
   // so include their full width when sizing the panel.
   const controlWidth = flatDirections.scrollWidth;
-  const panelWidth = Math.max(
-    contentWidth + sideGap * 2,
-    controlWidth + sideGap * 2
-  );
+  const panelWidth = Math.max(contentWidth,controlWidth)+2*sideGap;
 
   if (flatPanel.classList.contains('open')) {
          flatPanel.style.flexBasis = `${panelWidth}px`;
